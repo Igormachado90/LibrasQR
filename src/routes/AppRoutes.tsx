@@ -28,14 +28,16 @@ import Avaliacoes from "../pages/Avaliacoes";
 import AvaliacoesForm from "../pages/AvaliacoesForm";
 import Disponibilidade from "../pages/Disponibilidade";
 import DisponibilidadeForm from "../pages/DisponibilidadeForm";
+import LandingPage from "../pages/LandingPage";
 
 export default function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route
-                    path="/"
+                    path="/dashboard"
                     element={
                         <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
                             <Dashboard />

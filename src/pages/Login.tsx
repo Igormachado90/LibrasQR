@@ -33,7 +33,7 @@ export default function Login() {
 
     try {
       await login(email, password);
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
       console.error("Erro no login:", err);
       setError("Email ou senha inválidos. Por favor, tente novamente.");
@@ -43,7 +43,7 @@ export default function Login() {
   }
 
   const inputStyle = {
-    width: "90%",
+    width: "100%",
     padding: "10px 12px",
     marginTop: "6px",
     borderRadius: "8px",
