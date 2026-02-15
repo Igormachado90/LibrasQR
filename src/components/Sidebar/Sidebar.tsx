@@ -46,7 +46,7 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
     {
       title: "Dashboard",
       items: [
-        { name: "Dashboard", path: "/", roles: ["GESTOR", "PROFISSIONAL"], icon: <FaTachometerAlt /> }
+        { name: "Dashboard", path: "/dashboard", roles: ["GESTOR", "PROFISSIONAL"], icon: <FaTachometerAlt /> }
       ]
     },
     {
