@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: Props) {
   
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <Sidebar collapsed={sidebarCollapsed} />
+      <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
       <div style={{ 
         flex: 1, 
         display: "flex", 
@@ -25,7 +25,9 @@ export default function DashboardLayout({ children }: Props) {
         marginLeft: sidebarCollapsed ? "80px" : "260px", // Ajuste conforme largura do seu sidebar
         transition: "margin-left 0.3s ease"
         }}>
-        <Header onMenuClick={toggleSidebar}/>
+        <Header onMenuClick={toggleSidebar}
+        sidebarCollapsed={sidebarCollapsed}
+        />
         <main style={{ 
           flex: 1, 
           padding: "24px", 

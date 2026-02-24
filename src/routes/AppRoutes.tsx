@@ -1,7 +1,356 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { RequireAuth } from "../auth/RequireAuth";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import { RequireAuth } from "../auth/RequireAuth";
 
-import Login from "../pages/Login";
+// import Login from "../pages/Login";
+// import Dashboard from "../pages/Dashboard";
+// import Alunos from "../pages/Alunos";
+// import AlunoForm from "../pages/AlunoForm";
+// import Profissionais from "../pages/Profissionais";
+// import ProfissionalForm from "../pages/ProfissionalForm";
+// import Disciplinas from "../pages/Disciplinas";
+// import DisciplinasForm from "../pages/DisciplinasForm";
+// import PEI from "../pages/PEI";
+// import FolhasDeRegistro from "../pages/FolhasDeRegistro";
+// import Relatorios from "../pages/Relatorios";
+// import Agenda from "../pages/Agenda";
+// import Escolas from "../pages/Escolas";
+// import EscolasForm from "../pages/EscolasForm";
+// import Usuarios from "../pages/Usuarios";
+// import UsuariosForm from "../pages/UsuariosForm";
+// import FamiliasForm from "../pages/FamiliasForm";
+// import Familias from "../pages/Familias";
+// import Trumas from "../pages/Turmas";
+// import TurmasForm from "../pages/TurmasForm";
+// import Plataformas from "../pages/Plataformas";
+// import Aulas from "../pages/Aulas";
+// import AulasForm from "../pages/AulasForm";
+// import Avaliacoes from "../pages/Avaliacoes";
+// import AvaliacoesForm from "../pages/AvaliacoesForm";
+// import Disponibilidade from "../pages/Disponibilidade";
+// import DisponibilidadeForm from "../pages/DisponibilidadeForm";
+// import LandingPage from "../pages/LandingPage";
+
+// export default function AppRoutes() {
+//     return (
+//         <BrowserRouter>
+//             <Routes>
+//                 {/* <Route path="/" element={<LandingPage />} /> */}
+//                 {/* <Route path="/login" element={<Login />} /> */}
+//                 <Route
+//                     path="/dashboard"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
+//                             <Dashboard />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/plataformas"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Plataformas />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 {/* <Route
+//                     path="/plataformas/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <PlataformasForm />
+//                         </RequireAuth>
+//                     }
+//                 /> */}
+//                 <Route
+//                     path="/usuarios"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Usuarios />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/usuarios/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <UsuariosForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/usuarios/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <UsuariosForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/escolas"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Escolas />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/escolas/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <EscolasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/escolas/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <EscolasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/alunos"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
+//                             <Alunos />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/alunos/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AlunoForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/alunos/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AlunoForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/alunos/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AlunoForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/familias"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Familias />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/familias/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <FamiliasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/familias/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <FamiliasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/agenda"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
+//                             <Agenda />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/profissionais"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Profissionais />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/profissionais/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <ProfissionalForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/profissionais/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <ProfissionalForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/turmas"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Trumas />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/turmas/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <TurmasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/turmas/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <TurmasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/disciplina"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Disciplinas />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/disciplinas/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <DisciplinasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/disciplinas/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <DisciplinasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/aulas"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Aulas />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/aulas/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AulasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/aulas/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AulasForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/avaliacoes"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Avaliacoes />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/avaliacoes/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AvaliacoesForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/avaliacoes/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <AvaliacoesForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/disponibilidade"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Disponibilidade />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/disponibilidade/novo"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <DisponibilidadeForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/disponibilidade/:id/editar"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <DisponibilidadeForm />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/pei"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL", "FAMILIA"]}>
+//                             <PEI />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/folhas-registro"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
+//                             <FolhasDeRegistro />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 <Route
+//                     path="/relatorios"
+//                     element={
+//                         <RequireAuth allowedRoles={["GESTOR"]}>
+//                             <Relatorios />
+//                         </RequireAuth>
+//                     }
+//                 />
+//                 {/* 🚫 404 */}
+//                 <Route path="*" element={<h1>Página não encontrada</h1>} />
+
+//             </Routes>
+//         </BrowserRouter>
+//     );
+// }
+
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Dashboard from "../pages/Dashboard";
 import Alunos from "../pages/Alunos";
 import AlunoForm from "../pages/AlunoForm";
@@ -28,321 +377,164 @@ import Avaliacoes from "../pages/Avaliacoes";
 import AvaliacoesForm from "../pages/AvaliacoesForm";
 import Disponibilidade from "../pages/Disponibilidade";
 import DisponibilidadeForm from "../pages/DisponibilidadeForm";
-import LandingPage from "../pages/LandingPage";
+// import LandingPage from "../pages/LandingPage";
 
 export default function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
+                {/* <Route path="/" element={<LandingPage />} /> */}
+                {/* <Route path="/login" element={<Login />} /> */}
                 <Route
                     path="/dashboard"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
-                            <Dashboard />
-                        </RequireAuth>
-                    }
+                    element={<Dashboard />}
                 />
                 <Route
                     path="/plataformas"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Plataformas />
-                        </RequireAuth>
-                    }
+                    element={<Plataformas />}
                 />
                 {/* <Route
                     path="/plataformas/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <PlataformasForm />
-                        </RequireAuth>
-                    }
+                    element={<PlataformasForm />}
                 /> */}
                 <Route
                     path="/usuarios"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Usuarios />
-                        </RequireAuth>
-                    }
+                    element={<Usuarios />}
                 />
                 <Route
                     path="/usuarios/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <UsuariosForm />
-                        </RequireAuth>
-                    }
+                    element={<UsuariosForm />}
                 />
                 <Route
                     path="/usuarios/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <UsuariosForm />
-                        </RequireAuth>
-                    }
+                    element={<UsuariosForm />}
                 />
                 <Route
                     path="/escolas"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Escolas />
-                        </RequireAuth>
-                    }
+                    element={<Escolas />}
                 />
                 <Route
                     path="/escolas/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <EscolasForm />
-                        </RequireAuth>
-                    }
+                    element={<EscolasForm />}
                 />
                 <Route
                     path="/escolas/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <EscolasForm />
-                        </RequireAuth>
-                    }
+                    element={<EscolasForm />}
                 />
                 <Route
                     path="/alunos"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
-                            <Alunos />
-                        </RequireAuth>
-                    }
+                    element={<Alunos />}
                 />
                 <Route
                     path="/alunos/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AlunoForm />
-                        </RequireAuth>
-                    }
+                    element={<AlunoForm />}
                 />
                 <Route
                     path="/alunos/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AlunoForm />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/alunos/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AlunoForm />
-                        </RequireAuth>
-                    }
+                    element={<AlunoForm />}
                 />
                 <Route
                     path="/familias"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Familias />
-                        </RequireAuth>
-                    }
+                    element={<Familias />}
                 />
                 <Route
                     path="/familias/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <FamiliasForm />
-                        </RequireAuth>
-                    }
+                    element={<FamiliasForm />}
                 />
                 <Route
                     path="/familias/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <FamiliasForm />
-                        </RequireAuth>
-                    }
+                    element={<FamiliasForm />}
                 />
                 <Route
                     path="/agenda"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
-                            <Agenda />
-                        </RequireAuth>
-                    }
+                    element={<Agenda />}
                 />
                 <Route
                     path="/profissionais"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Profissionais />
-                        </RequireAuth>
-                    }
+                    element={<Profissionais />}
                 />
                 <Route
                     path="/profissionais/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <ProfissionalForm />
-                        </RequireAuth>
-                    }
+                    element={<ProfissionalForm />}
                 />
                 <Route
                     path="/profissionais/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <ProfissionalForm />
-                        </RequireAuth>
-                    }
+                    element={<ProfissionalForm />}
                 />
                 <Route
                     path="/turmas"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Trumas />
-                        </RequireAuth>
-                    }
+                    element={<Trumas />}
                 />
                 <Route
                     path="/turmas/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <TurmasForm />
-                        </RequireAuth>
-                    }
+                    element={<TurmasForm />}
                 />
                 <Route
                     path="/turmas/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <TurmasForm />
-                        </RequireAuth>
-                    }
+                    element={<TurmasForm />}
                 />
                 <Route
                     path="/disciplina"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Disciplinas />
-                        </RequireAuth>
-                    }
+                    element={<Disciplinas />}
                 />
                 <Route
                     path="/disciplinas/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <DisciplinasForm />
-                        </RequireAuth>
-                    }
+                    element={<DisciplinasForm />}
                 />
                 <Route
                     path="/disciplinas/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <DisciplinasForm />
-                        </RequireAuth>
-                    }
+                    element={<DisciplinasForm />}
                 />
                 <Route
                     path="/aulas"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Aulas />
-                        </RequireAuth>
-                    }
+                    element={<Aulas />}
                 />
                 <Route
                     path="/aulas/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AulasForm />
-                        </RequireAuth>
-                    }
+                    element={<AulasForm />}
                 />
                 <Route
                     path="/aulas/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AulasForm />
-                        </RequireAuth>
-                    }
+                    element={<AulasForm />}
                 />
                 <Route
                     path="/avaliacoes"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Avaliacoes />
-                        </RequireAuth>
-                    }
+                    element={<Avaliacoes />}
                 />
                 <Route
                     path="/avaliacoes/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AvaliacoesForm />
-                        </RequireAuth>
-                    }
+                    element={<AvaliacoesForm />}
                 />
                 <Route
                     path="/avaliacoes/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <AvaliacoesForm />
-                        </RequireAuth>
-                    }
+                    element={<AvaliacoesForm />}
                 />
                 <Route
                     path="/disponibilidade"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Disponibilidade />
-                        </RequireAuth>
-                    }
+                    element={<Disponibilidade />}
                 />
                 <Route
                     path="/disponibilidade/novo"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <DisponibilidadeForm />
-                        </RequireAuth>
-                    }
+                    element={<DisponibilidadeForm />}
                 />
                 <Route
                     path="/disponibilidade/:id/editar"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <DisponibilidadeForm />
-                        </RequireAuth>
-                    }
+                    element={<DisponibilidadeForm />}
                 />
                 <Route
                     path="/pei"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL", "FAMILIA"]}>
-                            <PEI />
-                        </RequireAuth>
-                    }
+                    element={<PEI />}
                 />
                 <Route
                     path="/folhas-registro"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR", "PROFISSIONAL"]}>
-                            <FolhasDeRegistro />
-                        </RequireAuth>
-                    }
+                    element={<FolhasDeRegistro />}
                 />
                 <Route
                     path="/relatorios"
-                    element={
-                        <RequireAuth allowedRoles={["GESTOR"]}>
-                            <Relatorios />
-                        </RequireAuth>
-                    }
+                    element={<Relatorios />}
                 />
                 {/* 🚫 404 */}
                 <Route path="*" element={<h1>Página não encontrada</h1>} />
-
             </Routes>
         </BrowserRouter>
     );
