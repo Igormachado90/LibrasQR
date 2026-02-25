@@ -358,21 +358,20 @@ import { useTheme } from "../contexts/ThemeContext";
 import ThemeToggle from "../Theme/ThemeToggle";
 import {
   FaHome,
-  FaQrcode,
   FaCamera,
   FaVideo,
   FaBook,
-  FaChartBar,
   FaCog,
   FaSignOutAlt,
   FaUsers,
   FaBell,
   FaStar,
   FaHistory,
-  FaFileAlt,
   FaChevronRight,
-  FaChevronLeft
+  FaChevronLeft,
+  FaFileAlt
 } from 'react-icons/fa';
+import { IoQrCode } from "react-icons/io5";
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -384,16 +383,17 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const { theme } = useTheme(); 
 
   const menuItems = [
-    { name: "Dashboard", path: "/", icon: <FaHome /> },
-    { name: "Gerar QR Code", path: "/gerar-qr", icon: <FaQrcode /> },
-    { name: "Scanner", path: "/scanner", icon: <FaCamera /> },
-    { name: "Biblioteca", path: "/biblioteca", icon: <FaVideo /> },
-    { name: "Meus QR Codes", path: "/meus-qrcodes", icon: <FaBook /> },
-    { name: "Favoritos", path: "/favoritos", icon: <FaStar /> },
+    { name: "Dashboard", path: "/dashboard", icon: <FaHome /> },
+    { name: "Termos de Uso", path: "/termos", icon: <FaFileAlt /> },
+    { name: "Aprovar/Recusar Termos", path: "/aprovarRecusar", icon: <FaFileAlt /> },
+    { name: "Gerar QR Code", path: "/gerar-qr", icon: <IoQrCode /> },
+    // { name: "Scanner", path: "/scanner", icon: <FaCamera /> },
+    // { name: "Biblioteca", path: "/biblioteca", icon: <FaVideo /> },
+    // { name: "Meus QR Codes", path: "/meus-qrcodes", icon: <FaBook /> },
+    // { name: "Favoritos", path: "/favoritos", icon: <FaStar /> },
     { name: "Histórico", path: "/historico", icon: <FaHistory /> },
-    { name: "Relatórios", path: "/relatorios", icon: <FaFileAlt /> },
-    { name: "Estatísticas", path: "/estatisticas", icon: <FaChartBar /> },
     { name: "Usuários", path: "/usuarios", icon: <FaUsers />, admin: true },
+    { name: "Categorias", path: "/categorias", icon: <FaBook /> },
     { name: "Notificações", path: "/notificacoes", icon: <FaBell /> },
     { name: "Configurações", path: "/configuracoes", icon: <FaCog /> }
   ];
@@ -441,19 +441,19 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
             alt="LibrasQR"
             style={{ 
               width: "40px", 
-              height: "40px",
-              marginBottom: "16px"
+              height: "51px",
+              marginBottom: "5px"
             }}
           />
         ) : (
           <>
             <img
-              src="/logoLibrasqr.png"
+              src="/logoLibrasQR.png"
               alt="LibrasQR"
               style={{ 
                 width: "140px", 
                 height: "auto",
-                marginBottom: "12px"
+                marginBottom: "5px"
               }}
             />
             <div style={{
@@ -519,7 +519,7 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         <ul style={{ 
           listStyle: "none", 
           padding: 0, 
-          margin: 0,
+          margin: "0px 5px",
           display: "flex",
           flexDirection: "column",
           gap: "2px"

@@ -291,7 +291,7 @@ export default function Header() {
         >
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>
-              Ana Silva
+              Igor Machado
             </div>
             <div style={{
               fontSize: "12px",
@@ -321,7 +321,7 @@ export default function Header() {
             fontSize: "16px",
             fontWeight: "bold"
           }}>
-            AS
+            IM
           </div>
         </div>
       </div>

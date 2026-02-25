@@ -358,25 +358,23 @@ import Profissionais from "../pages/Profissionais";
 import ProfissionalForm from "../pages/ProfissionalForm";
 import Disciplinas from "../pages/Disciplinas";
 import DisciplinasForm from "../pages/DisciplinasForm";
-import PEI from "../pages/PEI";
-import FolhasDeRegistro from "../pages/FolhasDeRegistro";
-import Relatorios from "../pages/Relatorios";
 import Agenda from "../pages/Agenda";
-import Escolas from "../pages/Escolas";
+import Termos from "../pages/GerenciarTermos";
 import EscolasForm from "../pages/EscolasForm";
 import Usuarios from "../pages/Usuarios";
 import UsuariosForm from "../pages/UsuariosForm";
 import FamiliasForm from "../pages/FamiliasForm";
-import Familias from "../pages/Familias";
+import Familias from "../pages/AprovarRecusarTermos";
 import Trumas from "../pages/Turmas";
 import TurmasForm from "../pages/TurmasForm";
 import Plataformas from "../pages/Plataformas";
-import Aulas from "../pages/Aulas";
+import GerarQRCode from "../pages/GerarQRCode";
 import AulasForm from "../pages/AulasForm";
-import Avaliacoes from "../pages/Avaliacoes";
+import Categorias from "../pages/Categorias";
 import AvaliacoesForm from "../pages/AvaliacoesForm";
 import Disponibilidade from "../pages/Disponibilidade";
 import DisponibilidadeForm from "../pages/DisponibilidadeForm";
+import Notificacoes from "../pages/Notificacoes";
 // import LandingPage from "../pages/LandingPage";
 
 export default function AppRoutes() {
@@ -410,15 +408,15 @@ export default function AppRoutes() {
                     element={<UsuariosForm />}
                 />
                 <Route
-                    path="/escolas"
-                    element={<Escolas />}
+                    path="/termos"
+                    element={<Termos />}
                 />
                 <Route
-                    path="/escolas/novo"
+                    path="/termos/novo"
                     element={<EscolasForm />}
                 />
                 <Route
-                    path="/escolas/:id/editar"
+                    path="/termos/:id/editar"
                     element={<EscolasForm />}
                 />
                 <Route
@@ -434,7 +432,7 @@ export default function AppRoutes() {
                     element={<AlunoForm />}
                 />
                 <Route
-                    path="/familias"
+                    path="/aprovarRecusar"
                     element={<Familias />}
                 />
                 <Route
@@ -486,8 +484,8 @@ export default function AppRoutes() {
                     element={<DisciplinasForm />}
                 />
                 <Route
-                    path="/aulas"
-                    element={<Aulas />}
+                    path="/gerar-qr"
+                    element={<GerarQRCode />}
                 />
                 <Route
                     path="/aulas/novo"
@@ -498,15 +496,15 @@ export default function AppRoutes() {
                     element={<AulasForm />}
                 />
                 <Route
-                    path="/avaliacoes"
-                    element={<Avaliacoes />}
+                    path="/categorias"
+                    element={<Categorias />}
                 />
                 <Route
-                    path="/avaliacoes/novo"
+                    path="/categorias/novo"
                     element={<AvaliacoesForm />}
                 />
                 <Route
-                    path="/avaliacoes/:id/editar"
+                    path="/categorias/:id/editar"
                     element={<AvaliacoesForm />}
                 />
                 <Route
@@ -522,16 +520,8 @@ export default function AppRoutes() {
                     element={<DisponibilidadeForm />}
                 />
                 <Route
-                    path="/pei"
-                    element={<PEI />}
-                />
-                <Route
-                    path="/folhas-registro"
-                    element={<FolhasDeRegistro />}
-                />
-                <Route
-                    path="/relatorios"
-                    element={<Relatorios />}
+                    path="/notificacoes"
+                    element={<Notificacoes />}
                 />
                 {/* 🚫 404 */}
                 <Route path="*" element={<h1>Página não encontrada</h1>} />

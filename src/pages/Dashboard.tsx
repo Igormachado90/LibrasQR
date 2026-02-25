@@ -323,6 +323,7 @@ import {
   FaTablet,
   FaLaptop
 } from "react-icons/fa";
+import { IoQrCode } from "react-icons/io5";
 
 interface DashboardStats {
   totalQRCodes: number;
@@ -665,7 +666,7 @@ export default function DashboardPage() {
           marginBottom: "32px"
         }}>
           <StatCard
-            icon={<FaQrcode size={24} />}
+            icon={<IoQrCode size={24} />}
             label="Total QR Codes"
             value={formatNumber(stats.totalQRCodes)}
             change="+12%"
