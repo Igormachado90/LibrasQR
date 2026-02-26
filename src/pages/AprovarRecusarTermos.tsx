@@ -67,8 +67,15 @@ import {
     FaFilter,
     FaChevronLeft,
     FaChevronRight,
-    FaExclamationTriangle
+    FaExclamationTriangle,
+    FaQrcode,
+    FaVideo,
+    FaBook,
+    FaBan,
+    FaBell
 } from "react-icons/fa";
+// import html2canvas from "html2canvas";
+import QRCode from "qrcode";
 
 interface TermoPendente {
     id: string;
@@ -88,6 +95,16 @@ interface TermoPendente {
     comentarios: Comentario[];
     anexos: number;
     tags: string[];
+    status: "pendente" | "publicado" | "recusado";
+    conteudo?: string;
+    videoExplicativo?: string;
+    definicoes?: Definicao[];
+    qrCode?: string;
+}
+
+interface Definicao {
+    termo: string;
+    definicao: string;
 }
 
 interface Comentario {
@@ -129,6 +146,12 @@ export default function AprovarRecusarTermos() {
     const [reviewComment, setReviewComment] = useState("");
     const [reviewAction, setReviewAction] = useState<"aprovar" | "recusar" | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showTermoModal, setShowTermoModal] = useState(false);
+    const [showVideoModal, setShowVideoModal] = useState(false);
+    const [showDefinicoesModal, setShowDefinicoesModal] = useState(false);
+    const [showQRCodeModal, setShowQRCodeModal] = useState(false);
+    const [qrCodeImage, setQrCodeImage] = useState<string>("");
+    const [notificacoes, setNotificacoes] = useState<Array<{ id: string; mensagem: string; tipo: string }>>([]);
     const itemsPerPage = 5;
 
     const categorias = [
@@ -183,7 +206,14 @@ export default function AprovarRecusarTermos() {
                         }
                     ],
                     anexos: 2,
-                    tags: ["equipamentos", "responsabilidade"]
+                    tags: ["equipamentos", "responsabilidade"],
+                    status: "pendente",
+                    conteudo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+                    videoExplicativo: "https://www.youtube.com/watch?v=example",
+                    definicoes: [
+                        { termo: "Equipamento", definicao: "Qualquer dispositivo eletrônico fornecido pela instituição" },
+                        { termo: "Responsabilidade", definicao: "Obrigação de responder pelos atos praticados" }
+                    ]
                 },
                 {
                     id: "2",
@@ -201,7 +231,8 @@ export default function AprovarRecusarTermos() {
                     prioridade: "media",
                     comentarios: [],
                     anexos: 1,
-                    tags: ["estágio", "compromisso"]
+                    tags: ["estágio", "compromisso"],
+                    status: "pendente"
                 },
                 {
                     id: "3",
@@ -234,7 +265,8 @@ export default function AprovarRecusarTermos() {
                         }
                     ],
                     anexos: 3,
-                    tags: ["pesquisa", "consentimento"]
+                    tags: ["pesquisa", "consentimento"],
+                    status: "pendente"
                 },
                 {
                     id: "4",
@@ -251,7 +283,8 @@ export default function AprovarRecusarTermos() {
                     prioridade: "baixa",
                     comentarios: [],
                     anexos: 0,
-                    tags: ["confidencialidade", "dados"]
+                    tags: ["confidencialidade", "dados"],
+                    status: "pendente"
                 }
             ];
 
@@ -295,31 +328,6 @@ export default function AprovarRecusarTermos() {
                     data: "2024-02-17T09:45:00",
                     justificativa: "Solicitada revisão do item 3.2 sobre elegibilidade",
                     versao: "1.2"
-                },
-                {
-                    id: "h4",
-                    termoId: "104",
-                    termoTitulo: "Termo de Consentimento Livre",
-                    acao: "aprovado",
-                    revisor: {
-                        id: "5",
-                        nome: "Carlos Santos"
-                    },
-                    data: "2024-02-16T14:15:00",
-                    versao: "2.1"
-                },
-                {
-                    id: "h5",
-                    termoId: "105",
-                    termoTitulo: "Termo de Compromisso - Bolsa",
-                    acao: "aprovado",
-                    revisor: {
-                        id: "1",
-                        nome: "Admin Sistema"
-                    },
-                    data: "2024-02-15T10:30:00",
-                    justificativa: "Aprovado com ressalvas - corrigir ortografia",
-                    versao: "1.3"
                 }
             ];
 
@@ -333,6 +341,7 @@ export default function AprovarRecusarTermos() {
     };
 
     const filteredPendentes = termosPendentes
+        .filter(termo => termo.status === "pendente")
         .filter(termo => {
             const matchesSearch = termo.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 termo.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -344,7 +353,6 @@ export default function AprovarRecusarTermos() {
             return matchesSearch && matchesCategoria && matchesPrioridade;
         })
         .sort((a, b) => {
-            // Ordenar por prioridade (urgente primeiro)
             const prioridadeOrder = { urgente: 0, alta: 1, media: 2, baixa: 3 };
             return prioridadeOrder[a.prioridade] - prioridadeOrder[b.prioridade];
         });
@@ -371,37 +379,104 @@ export default function AprovarRecusarTermos() {
         setShowReviewModal(true);
     };
 
-    const submitReview = () => {
+    const gerarQRCode = async (texto: string): Promise<string> => {
+        try {
+            return await QRCode.toDataURL(texto);
+        } catch (error) {
+            console.error("Erro ao gerar QR Code:", error);
+            return "";
+        }
+    };
+
+    const enviarNotificacao = (usuarioId: string, mensagem: string, tipo: string) => {
+        const novaNotificacao = {
+            id: Date.now().toString(),
+            mensagem,
+            tipo
+        };
+        setNotificacoes(prev => [novaNotificacao, ...prev]);
+        console.log(`Notificação enviada para usuário ${usuarioId}: ${mensagem}`);
+    };
+
+    const submitReview = async () => {
         if (!reviewAction || !selectedTermo) return;
 
-        console.log(`${reviewAction === "aprovar" ? "Aprovando" : "Recusando"} termo:`, {
-            termoId: selectedTermo.id,
-            action: reviewAction,
-            comment: reviewComment
-        });
+        try {
+            if (reviewAction === "aprovar") {
+                // Gerar QR Code automaticamente
+                const qrCodeData = `https://sistema-termos.com/termo/${selectedTermo.id}`;
+                const qrCode = await gerarQRCode(qrCodeData);
 
-        // Simular aprovação/recusa
-        setTimeout(() => {
-            setTermosPendentes(prev => prev.filter(t => t.id !== selectedTermo.id));
-            setHistorico(prev => [
-                {
-                    id: `h${Date.now()}`,
-                    termoId: selectedTermo.id,
-                    termoTitulo: selectedTermo.titulo,
-                    acao: reviewAction === "aprovar" ? "aprovado" : "recusado",
-                    revisor: { id: "1", nome: "Admin Sistema" },
-                    data: new Date().toISOString(),
-                    justificativa: reviewComment,
-                    versao: selectedTermo.versao
-                },
-                ...prev
-            ]);
+                // Atualizar status do termo para publicado
+                const termoAtualizado = {
+                    ...selectedTermo,
+                    status: "publicado" as const,
+                    qrCode: qrCode,
+                    dataPublicacao: new Date().toISOString()
+                };
+
+                setTermosPendentes(prev => prev.map(t => 
+                    t.id === selectedTermo.id ? termoAtualizado : t
+                ));
+
+                setHistorico(prev => [
+                    {
+                        id: `h${Date.now()}`,
+                        termoId: selectedTermo.id,
+                        termoTitulo: selectedTermo.titulo,
+                        acao: "aprovado",
+                        revisor: { id: "1", nome: "Admin Sistema" },
+                        data: new Date().toISOString(),
+                        justificativa: reviewComment,
+                        versao: selectedTermo.versao
+                    },
+                    ...prev
+                ]);
+
+                // Mostrar QR Code
+                setQrCodeImage(qrCode);
+                setShowQRCodeModal(true);
+            } else {
+                // Recusar termo
+                const termoAtualizado = {
+                    ...selectedTermo,
+                    status: "recusado" as const,
+                    justificativaRecusa: reviewComment
+                };
+
+                setTermosPendentes(prev => prev.map(t => 
+                    t.id === selectedTermo.id ? termoAtualizado : t
+                ));
+
+                setHistorico(prev => [
+                    {
+                        id: `h${Date.now()}`,
+                        termoId: selectedTermo.id,
+                        termoTitulo: selectedTermo.titulo,
+                        acao: "recusado",
+                        revisor: { id: "1", nome: "Admin Sistema" },
+                        data: new Date().toISOString(),
+                        justificativa: reviewComment,
+                        versao: selectedTermo.versao
+                    },
+                    ...prev
+                ]);
+
+                // Enviar notificação
+                enviarNotificacao(
+                    selectedTermo.autor.id,
+                    `Seu termo "${selectedTermo.titulo}" foi recusado. Motivo: ${reviewComment}`,
+                    "recusa"
+                );
+            }
 
             setShowReviewModal(false);
             setReviewAction(null);
             setReviewComment("");
             setSelectedTermo(null);
-        }, 500);
+        } catch (error) {
+            console.error("Erro ao processar revisão:", error);
+        }
     };
 
     const getTimeRemaining = (dataLimite?: string) => {
@@ -487,7 +562,7 @@ export default function AprovarRecusarTermos() {
                             borderColor: activeSection === "pendentes" ? "var(--primary)" : "var(--border-color)"
                         }}
                     >
-                        <FaClock /> Pendentes ({termosPendentes.length})
+                        <FaClock /> Pendentes ({termosPendentes.filter(t => t.status === "pendente").length})
                     </button>
                     <button
                         onClick={() => {
@@ -630,11 +705,39 @@ export default function AprovarRecusarTermos() {
 
                                         <div style={styles.cardActions}>
                                             <button
-                                                onClick={() => navigate(`/termos/${termo.id}`)}
+                                                onClick={() => {
+                                                    setSelectedTermo(termo);
+                                                    setShowTermoModal(true);
+                                                }}
                                                 style={styles.actionButton}
+                                                title="Visualizar termo"
                                             >
-                                                <FaEye /> Visualizar
+                                                <FaEye /> Termo
                                             </button>
+                                            {termo.videoExplicativo && (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedTermo(termo);
+                                                        setShowVideoModal(true);
+                                                    }}
+                                                    style={styles.actionButton}
+                                                    title="Assistir vídeo explicativo"
+                                                >
+                                                    <FaVideo /> Vídeo
+                                                </button>
+                                            )}
+                                            {termo.definicoes && termo.definicoes.length > 0 && (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedTermo(termo);
+                                                        setShowDefinicoesModal(true);
+                                                    }}
+                                                    style={styles.actionButton}
+                                                    title="Ver definições"
+                                                >
+                                                    <FaBook /> Definições
+                                                </button>
+                                            )}
                                             <button
                                                 onClick={() => handleReview(termo)}
                                                 style={{ ...styles.actionButton, background: "var(--primary)", color: "#fff" }}
@@ -817,12 +920,14 @@ export default function AprovarRecusarTermos() {
 
                                 <div style={styles.modalComment}>
                                     <label style={styles.modalCommentLabel}>
-                                        Justificativa (opcional para aprovação, obrigatória para recusa)
+                                        Justificativa {reviewAction === "recusar" && <span style={{color: "var(--danger)"}}>*</span>}
                                     </label>
                                     <textarea
                                         value={reviewComment}
                                         onChange={(e) => setReviewComment(e.target.value)}
-                                        placeholder="Digite sua justificativa aqui..."
+                                        placeholder={reviewAction === "recusar" 
+                                            ? "Digite o motivo da recusa (obrigatório)" 
+                                            : "Digite sua justificativa (opcional)"}
                                         rows={4}
                                         style={styles.modalTextarea}
                                     />
@@ -854,13 +959,13 @@ export default function AprovarRecusarTermos() {
                                 </button>
                                 <button
                                     onClick={submitReview}
-                                    disabled={!reviewAction || (reviewAction === "recusar" && !reviewComment)}
+                                    disabled={!reviewAction || (reviewAction === "recusar" && !reviewComment.trim())}
                                     style={{
                                         ...styles.modalSubmitButton,
-                                        background: !reviewAction || (reviewAction === "recusar" && !reviewComment)
+                                        background: !reviewAction || (reviewAction === "recusar" && !reviewComment.trim())
                                             ? "var(--text-tertiary)"
                                             : reviewAction === "aprovar" ? "var(--success)" : "var(--danger)",
-                                        cursor: !reviewAction || (reviewAction === "recusar" && !reviewComment)
+                                        cursor: !reviewAction || (reviewAction === "recusar" && !reviewComment.trim())
                                             ? "not-allowed"
                                             : "pointer"
                                     }}
@@ -871,18 +976,180 @@ export default function AprovarRecusarTermos() {
                         </div>
                     </div>
                 )}
+
+                {/* Modal de Visualização do Termo */}
+                {showTermoModal && selectedTermo && (
+                    <div style={styles.modalOverlay}>
+                        <div style={{...styles.modal, maxWidth: "800px"}}>
+                            <div style={styles.modalHeader}>
+                                <h3 style={styles.modalTitle}>Visualizar Termo</h3>
+                                <button
+                                    onClick={() => setShowTermoModal(false)}
+                                    style={styles.modalClose}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div style={styles.modalBody}>
+                                <h4>{selectedTermo.titulo}</h4>
+                                <p style={styles.modalTermoInfo}>
+                                    <strong>Versão:</strong> {selectedTermo.versao}<br />
+                                    <strong>Categoria:</strong> {selectedTermo.categoria}<br />
+                                    <strong>Autor:</strong> {selectedTermo.autor.nome} ({selectedTermo.autor.tipo})<br />
+                                    <strong>Data de envio:</strong> {new Date(selectedTermo.dataEnvio).toLocaleString()}
+                                </p>
+                                <div style={styles.termoConteudo}>
+                                    <h5>Conteúdo do Termo:</h5>
+                                    <p>{selectedTermo.conteudo || "Conteúdo não disponível"}</p>
+                                </div>
+                            </div>
+                            <div style={styles.modalFooter}>
+                                <button
+                                    onClick={() => setShowTermoModal(false)}
+                                    style={styles.modalCancelButton}
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Modal de Vídeo */}
+                {showVideoModal && selectedTermo && selectedTermo.videoExplicativo && (
+                    <div style={styles.modalOverlay}>
+                        <div style={{...styles.modal, maxWidth: "800px"}}>
+                            <div style={styles.modalHeader}>
+                                <h3 style={styles.modalTitle}>Vídeo Explicativo</h3>
+                                <button
+                                    onClick={() => setShowVideoModal(false)}
+                                    style={styles.modalClose}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div style={styles.modalBody}>
+                                <h4>{selectedTermo.titulo}</h4>
+                                <div style={styles.videoContainer}>
+                                    <iframe
+                                        src={selectedTermo.videoExplicativo.replace("watch?v=", "embed/")}
+                                        title="Vídeo explicativo"
+                                        width="100%"
+                                        height="400"
+                                        frameBorder="0"
+                                        allowFullScreen
+                                    ></iframe>
+                                </div>
+                            </div>
+                            <div style={styles.modalFooter}>
+                                <button
+                                    onClick={() => setShowVideoModal(false)}
+                                    style={styles.modalCancelButton}
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Modal de Definições */}
+                {showDefinicoesModal && selectedTermo && selectedTermo.definicoes && (
+                    <div style={styles.modalOverlay}>
+                        <div style={{...styles.modal, maxWidth: "600px"}}>
+                            <div style={styles.modalHeader}>
+                                <h3 style={styles.modalTitle}>Definições do Termo</h3>
+                                <button
+                                    onClick={() => setShowDefinicoesModal(false)}
+                                    style={styles.modalClose}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div style={styles.modalBody}>
+                                <h4>{selectedTermo.titulo}</h4>
+                                <div style={styles.definicoesList}>
+                                    {selectedTermo.definicoes.map((def, index) => (
+                                        <div key={index} style={styles.definicaoItem}>
+                                            <strong>{def.termo}:</strong>
+                                            <p>{def.definicao}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div style={styles.modalFooter}>
+                                <button
+                                    onClick={() => setShowDefinicoesModal(false)}
+                                    style={styles.modalCancelButton}
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Modal de QR Code */}
+                {showQRCodeModal && qrCodeImage && (
+                    <div style={styles.modalOverlay}>
+                        <div style={{...styles.modal, maxWidth: "400px"}}>
+                            <div style={styles.modalHeader}>
+                                <h3 style={styles.modalTitle}>QR Code Gerado</h3>
+                                <button
+                                    onClick={() => setShowQRCodeModal(false)}
+                                    style={styles.modalClose}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div style={{...styles.modalBody, textAlign: "center"}}>
+                                <img 
+                                    src={qrCodeImage} 
+                                    alt="QR Code do termo" 
+                                    style={styles.qrCodeImage}
+                                />
+                                <p style={styles.qrCodeInfo}>
+                                    QR Code gerado automaticamente para o termo aprovado.
+                                </p>
+                                <p style={styles.qrCodeInfo}>
+                                    Status: <strong style={{color: "var(--success)"}}>Publicado</strong>
+                                </p>
+                            </div>
+                            <div style={styles.modalFooter}>
+                                <button
+                                    onClick={() => {
+                                        const link = document.createElement('a');
+                                        link.download = `qrcode-termo-${selectedTermo?.id}.png`;
+                                        link.href = qrCodeImage;
+                                        link.click();
+                                    }}
+                                    style={{...styles.modalSubmitButton, background: "var(--primary)"}}
+                                >
+                                    <FaDownload /> Baixar QR Code
+                                </button>
+                                <button
+                                    onClick={() => setShowQRCodeModal(false)}
+                                    style={styles.modalCancelButton}
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </DashboardLayout>
     );
 }
 
-// Estilos (reutilizando os mesmos padrões dos componentes anteriores)
+// Estilos atualizados
 const styles: Record<string, React.CSSProperties> = {
     loadingContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "60vh"
+        minHeight: "60vh",
+        flexDirection: "column"
     },
     spinner: {
         width: "50px",
@@ -1119,7 +1386,8 @@ const styles: Record<string, React.CSSProperties> = {
     cardActions: {
         display: "flex",
         gap: "8px",
-        justifyContent: "flex-end"
+        justifyContent: "flex-end",
+        flexWrap: "wrap"
     },
     actionButton: {
         padding: "8px 16px",
@@ -1378,5 +1646,52 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: "14px",
         fontWeight: "500",
         transition: "all 0.2s"
+    },
+    videoContainer: {
+        marginTop: "16px",
+        borderRadius: "8px",
+        overflow: "hidden"
+    },
+    definicoesList: {
+        marginTop: "16px"
+    },
+    definicaoItem: {
+        padding: "12px",
+        background: "var(--bg-tertiary)",
+        borderRadius: "8px",
+        marginBottom: "8px"
+    },
+    termoConteudo: {
+        padding: "16px",
+        background: "var(--bg-tertiary)",
+        borderRadius: "8px",
+        marginTop: "16px"
+    },
+    qrCodeImage: {
+        maxWidth: "250px",
+        width: "100%",
+        height: "auto",
+        margin: "20px auto",
+        display: "block"
+    },
+    qrCodeInfo: {
+        fontSize: "14px",
+        color: "var(--text-secondary)",
+        margin: "8px 0"
     }
 };
+
+// Adicionar keyframes para animações
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(styleSheet);

@@ -437,7 +437,7 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         {/* Logo */}
         {collapsed ? (
           <img
-            src="/logoQR.png"
+            src={theme === "dark" ? "/logoQR.png" : "/logoQR-dark.png"}
             alt="LibrasQR"
             style={{ 
               width: "40px", 
@@ -448,7 +448,7 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         ) : (
           <>
             <img
-              src="/logoLibrasQR.png"
+              src={theme === "dark" ? "/logoLibrasQR.png" : "/logoLibrasQR-dark.png"}
               alt="LibrasQR"
               style={{ 
                 width: "140px", 
