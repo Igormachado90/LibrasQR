@@ -369,9 +369,11 @@ import {
   FaHistory,
   FaChevronRight,
   FaChevronLeft,
-  FaFileAlt
+  FaFileAlt,
+  FaBookOpen
 } from 'react-icons/fa';
 import { IoQrCode } from "react-icons/io5";
+import { FaGraduationCap } from "react-icons/fa6";
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -387,11 +389,13 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
     { name: "Termos de Uso", path: "/termos", icon: <FaFileAlt /> },
     { name: "Aprovar/Recusar Termos", path: "/aprovarRecusar", icon: <FaFileAlt /> },
     { name: "Gerar QR Code", path: "/gerar-qr", icon: <IoQrCode /> },
+    { name: "Cursos", path: "/curso", icon: <FaGraduationCap /> },
     // { name: "Scanner", path: "/scanner", icon: <FaCamera /> },
     // { name: "Biblioteca", path: "/biblioteca", icon: <FaVideo /> },
     // { name: "Meus QR Codes", path: "/meus-qrcodes", icon: <FaBook /> },
     // { name: "Favoritos", path: "/favoritos", icon: <FaStar /> },
     { name: "Histórico", path: "/historico", icon: <FaHistory /> },
+    { name: "Materiais Didaticos", path: "/materiais-didaticos", icon: <FaBookOpen /> },
     { name: "Usuários", path: "/usuarios", icon: <FaUsers />, admin: true },
     { name: "Categorias", path: "/categorias", icon: <FaBook /> },
     { name: "Notificações", path: "/notificacoes", icon: <FaBell /> },

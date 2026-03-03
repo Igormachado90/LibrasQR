@@ -352,15 +352,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Dashboard from "../pages/Dashboard";
-import Alunos from "../pages/Alunos";
+import Cursos from "../pages/Cursos";
 import AlunoForm from "../pages/AlunoForm";
 import Profissionais from "../pages/Profissionais";
 import ProfissionalForm from "../pages/ProfissionalForm";
-import Disciplinas from "../pages/Disciplinas";
+import MateriaisDidaticos from "../pages/MateriaisDidaticos";
 import DisciplinasForm from "../pages/DisciplinasForm";
 import Agenda from "../pages/Agenda";
 import Termos from "../pages/GerenciarTermos";
-import EscolasForm from "../pages/EscolasForm";
+import EscolasForm from "../pages/CadastrarTermo";
 import Usuarios from "../pages/Usuarios";
 import UsuariosForm from "../pages/UsuariosForm";
 import FamiliasForm from "../pages/FamiliasForm";
@@ -375,13 +375,13 @@ import AvaliacoesForm from "../pages/AvaliacoesForm";
 import Disponibilidade from "../pages/Disponibilidade";
 import DisponibilidadeForm from "../pages/DisponibilidadeForm";
 import Notificacoes from "../pages/Notificacoes";
-// import LandingPage from "../pages/LandingPage";
+import LandingPage from "../pages/LandingPage";
 
 export default function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* <Route path="/" element={<LandingPage />} /> */}
+                <Route path="/" element={<LandingPage />} />
                 {/* <Route path="/login" element={<Login />} /> */}
                 <Route
                     path="/dashboard"
@@ -420,15 +420,15 @@ export default function AppRoutes() {
                     element={<EscolasForm />}
                 />
                 <Route
-                    path="/alunos"
-                    element={<Alunos />}
+                    path="/curso"
+                    element={<Cursos />}
                 />
                 <Route
-                    path="/alunos/novo"
+                    path="/curso/novo"
                     element={<AlunoForm />}
                 />
                 <Route
-                    path="/alunos/:id/editar"
+                    path="/curso/:id/editar"
                     element={<AlunoForm />}
                 />
                 <Route
@@ -472,15 +472,15 @@ export default function AppRoutes() {
                     element={<TurmasForm />}
                 />
                 <Route
-                    path="/disciplina"
-                    element={<Disciplinas />}
+                    path="/materiais-didaticos"
+                    element={<MateriaisDidaticos />}
                 />
                 <Route
-                    path="/disciplinas/novo"
+                    path="/materiais-didaticos/novo"
                     element={<DisciplinasForm />}
                 />
                 <Route
-                    path="/disciplinas/:id/editar"
+                    path="/materiais-didaticos/:id/editar"
                     element={<DisciplinasForm />}
                 />
                 <Route

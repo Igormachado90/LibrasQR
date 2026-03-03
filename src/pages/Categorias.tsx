@@ -91,7 +91,7 @@ interface Categoria {
   termosCount: number;
   videosCount: number;
   visualizacoes: number;
-  status: "ativo" | "inativo";
+  status: "ativo" | "inativo" | "rascunho";
   dataCriacao: string;
   ultimaAtualizacao: string;
   criadoPor: string;
@@ -102,7 +102,7 @@ interface FormCategoria {
   descricao: string;
   cor: string;
   icone: string;
-  status: "ativo" | "inativo";
+  status: "ativo" | "inativo" | "rascunho";
 }
 
 interface FormErrors {
@@ -153,77 +153,147 @@ export default function GerenciarCategorias() {
       await new Promise(resolve => setTimeout(resolve, 800));
       
       const mockCategorias: Categoria[] = [
-        {
-          id: "1",
-          nome: "Educação",
-          descricao: "Termos relacionados ao ambiente educacional",
-          cor: "#2563eb",
-          icone: "📚",
-          termosCount: 45,
-          videosCount: 32,
-          visualizacoes: 1234,
-          status: "ativo",
-          dataCriacao: "2024-01-15",
-          ultimaAtualizacao: "2024-02-20",
-          criadoPor: "Admin"
-        },
-        {
-          id: "2",
-          nome: "Saúde",
-          descricao: "Termos da área da saúde e bem-estar",
-          cor: "#10b981",
-          icone: "🏥",
-          termosCount: 28,
-          videosCount: 21,
-          visualizacoes: 987,
-          status: "ativo",
-          dataCriacao: "2024-01-15",
-          ultimaAtualizacao: "2024-02-19",
-          criadoPor: "Admin"
-        },
-        {
-          id: "3",
-          nome: "Direitos",
-          descricao: "Termos sobre direitos e cidadania",
-          cor: "#8b5cf6",
-          icone: "⚖️",
-          termosCount: 22,
-          videosCount: 18,
-          visualizacoes: 756,
-          status: "ativo",
-          dataCriacao: "2024-01-16",
-          ultimaAtualizacao: "2024-02-18",
-          criadoPor: "Admin"
-        },
-        {
-          id: "4",
-          nome: "Tecnologia",
-          descricao: "Termos de informática e tecnologia",
-          cor: "#f59e0b",
-          icone: "💻",
-          termosCount: 19,
-          videosCount: 15,
-          visualizacoes: 654,
-          status: "ativo",
-          dataCriacao: "2024-01-20",
-          ultimaAtualizacao: "2024-02-17",
-          criadoPor: "Admin"
-        },
-        {
-          id: "5",
-          nome: "Cultura",
-          descricao: "Termos culturais e artísticos",
-          cor: "#ec4899",
-          icone: "🎨",
-          termosCount: 16,
-          videosCount: 14,
-          visualizacoes: 543,
-          status: "inativo",
-          dataCriacao: "2024-01-22",
-          ultimaAtualizacao: "2024-02-16",
-          criadoPor: "Admin"
-        }
-      ];
+    {
+        id: "1",
+        nome: "Conceitos Fundamentais",
+        descricao: "Termos básicos da programação: algoritmos, variáveis, constantes, tipos de dados",
+        cor: "#2563eb",
+        icone: "🧠",
+        termosCount: 38,
+        videosCount: 28,
+        visualizacoes: 1542,
+        status: "ativo",
+        dataCriacao: "2024-01-15",
+        ultimaAtualizacao: "2024-02-20",
+        criadoPor: "Admin"
+    },
+    {
+        id: "2",
+        nome: "Estruturas de Controle",
+        descricao: "Comandos condicionais (if/else, switch) e estruturas de repetição (for, while)",
+        cor: "#10b981",
+        icone: "⚙️",
+        termosCount: 32,
+        videosCount: 24,
+        visualizacoes: 1243,
+        status: "ativo",
+        dataCriacao: "2024-01-15",
+        ultimaAtualizacao: "2024-02-19",
+        criadoPor: "Admin"
+    },
+    {
+        id: "3",
+        nome: "Estruturas de Dados",
+        descricao: "Vetores, matrizes, listas, pilhas, filas e árvores",
+        cor: "#8b5cf6",
+        icone: "📊",
+        termosCount: 28,
+        videosCount: 22,
+        visualizacoes: 1120,
+        status: "ativo",
+        dataCriacao: "2024-01-16",
+        ultimaAtualizacao: "2024-02-18",
+        criadoPor: "Admin"
+    },
+    {
+        id: "4",
+        nome: "Programação Orientada a Objetos",
+        descricao: "Classes, objetos, herança, polimorfismo, encapsulamento e abstração",
+        cor: "#f59e0b",
+        icone: "🔷",
+        termosCount: 35,
+        videosCount: 30,
+        visualizacoes: 1876,
+        status: "ativo",
+        dataCriacao: "2024-01-20",
+        ultimaAtualizacao: "2024-02-17",
+        criadoPor: "Admin"
+    },
+    {
+        id: "5",
+        nome: "Funções e Modularização",
+        descricao: "Procedimentos, funções, parâmetros, retorno, escopo e recursividade",
+        cor: "#ec4899",
+        icone: "🔄",
+        termosCount: 25,
+        videosCount: 20,
+        visualizacoes: 987,
+        status: "ativo",
+        dataCriacao: "2024-01-22",
+        ultimaAtualizacao: "2024-02-16",
+        criadoPor: "Admin"
+    },
+    {
+        id: "6",
+        nome: "Algoritmos de Ordenação",
+        descricao: "Bubble sort, insertion sort, selection sort, merge sort, quick sort",
+        cor: "#ef4444",
+        icone: "📋",
+        termosCount: 18,
+        videosCount: 16,
+        visualizacoes: 876,
+        status: "ativo",
+        dataCriacao: "2024-01-24",
+        ultimaAtualizacao: "2024-02-15",
+        criadoPor: "Admin"
+    },
+    {
+        id: "7",
+        nome: "Algoritmos de Busca",
+        descricao: "Busca linear, busca binária, busca em profundidade, busca em largura",
+        cor: "#14b8a6",
+        icone: "🔍",
+        termosCount: 16,
+        videosCount: 14,
+        visualizacoes: 765,
+        status: "ativo",
+        dataCriacao: "2024-01-26",
+        ultimaAtualizacao: "2024-02-14",
+        criadoPor: "Admin"
+    },
+    {
+        id: "8",
+        nome: "Linguagens de Programação",
+        descricao: "Sintaxe, compiladores, interpretadores, paradigmas: imperativo, funcional, declarativo",
+        cor: "#a855f7",
+        icone: "💻",
+        termosCount: 22,
+        videosCount: 18,
+        visualizacoes: 934,
+        status: "ativo",
+        dataCriacao: "2024-01-28",
+        ultimaAtualizacao: "2024-02-13",
+        criadoPor: "Admin"
+    },
+    {
+        id: "9",
+        nome: "Banco de Dados",
+        descricao: "SQL, consultas, tabelas, relacionamentos, chaves, índices e normalização",
+        cor: "#06b6d4",
+        icone: "🗄️",
+        termosCount: 30,
+        videosCount: 24,
+        visualizacoes: 1102,
+        status: "rascunho",
+        dataCriacao: "2024-01-30",
+        ultimaAtualizacao: "2024-02-12",
+        criadoPor: "Admin"
+    },
+    {
+        id: "10",
+        nome: "Boas Práticas",
+        descricao: "Clean code, refatoração, padrões de projeto, testes, documentação",
+        cor: "#f97316",
+        icone: "✅",
+        termosCount: 27,
+        videosCount: 19,
+        visualizacoes: 843,
+        status: "inativo",
+        dataCriacao: "2024-02-01",
+        ultimaAtualizacao: "2024-02-11",
+        criadoPor: "Admin"
+    }
+];
       
       setCategorias(mockCategorias);
     } catch (error) {

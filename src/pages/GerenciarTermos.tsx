@@ -113,162 +113,216 @@ export default function GerenciarTermos() {
     const itemsPerPage = 10;
 
     const categorias = [
-        "Consentimento",
-        "Responsabilidade",
-        "Confidencialidade",
-        "Adesão",
-        "Compromisso",
-        "Autorização",
-        "Declaração"
-    ];
+    "Conceitos Básicos",
+    "Estruturas de Controle", 
+    "Estruturas de Dados",
+    "Programação Orientada a Objetos",
+    "Algoritmos",
+    "Banco de Dados",
+    "Funções",
+    "Linguagens de Programação"
+];
 
-    useEffect(() => {
-        fetchTermos();
-    }, [activeTab]);
+useEffect(() => {
+    fetchTermos();
+}, [activeTab]);
 
-    const fetchTermos = async () => {
-        setLoading(true);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+const fetchTermos = async () => {
+    setLoading(true);
+    try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const mockTermos: Termo[] = [
-                {
+        const mockTermos: Termo[] = [
+            {
+                id: "1",
+                titulo: "Algoritmos de Ordenação - Quick Sort",
+                descricao: "Implementação e análise do algoritmo de ordenação Quick Sort em diferentes linguagens",
+                categoria: "Algoritmos",
+                status: "aprovado",
+                versao: "2.1",
+                autor: {
                     id: "1",
-                    titulo: "Termo de Consentimento Livre e Esclarecido",
-                    descricao: "Termo para autorização de participação em pesquisas e atividades",
-                    categoria: "Consentimento",
-                    status: "aprovado",
-                    versao: "2.1",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-15",
-                    dataPublicacao: "2024-02-20",
-                    visualizacoes: 234,
-                    assinaturas: 45,
-                    tags: ["consentimento", "pesquisa", "autorização"]
+                    nome: "Admin Sistema",
+                    tipo: "admin"
                 },
-                {
+                dataCriacao: "2024-02-15",
+                dataPublicacao: "2024-02-20",
+                visualizacoes: 234,
+                assinaturas: 45,
+                tags: ["quick sort", "ordenação", "algoritmos", "complexidade"]
+            },
+            {
+                id: "2",
+                titulo: "Estruturas Condicionais em Python",
+                descricao: "Guia completo sobre if/else, elif e estruturas de decisão em Python",
+                categoria: "Estruturas de Controle",
+                status: "pendente",
+                versao: "1.0",
+                autor: {
                     id: "2",
-                    titulo: "Termo de Responsabilidade - Uso de Equipamentos",
-                    descricao: "Termo para responsabilidade sobre uso de equipamentos da instituição",
-                    categoria: "Responsabilidade",
-                    status: "pendente",
-                    versao: "1.0",
-                    autor: {
-                        id: "2",
-                        nome: "João Silva",
-                        tipo: "gestor"
-                    },
-                    dataCriacao: "2024-02-18",
-                    visualizacoes: 56,
-                    assinaturas: 0,
-                    tags: ["equipamentos", "responsabilidade", "patrimônio"]
+                    nome: "João Silva",
+                    tipo: "gestor"
                 },
-                {
+                dataCriacao: "2024-02-18",
+                visualizacoes: 56,
+                assinaturas: 0,
+                tags: ["python", "if-else", "condicionais", "estruturas de controle"]
+            },
+            {
+                id: "3",
+                titulo: "Manipulação de Arrays em JavaScript",
+                descricao: "Métodos avançados para manipulação de arrays: map, filter, reduce, forEach",
+                categoria: "Estruturas de Dados",
+                status: "aprovado",
+                versao: "3.0",
+                autor: {
+                    id: "1",
+                    nome: "Admin Sistema",
+                    tipo: "admin"
+                },
+                dataCriacao: "2024-02-10",
+                dataPublicacao: "2024-02-12",
+                visualizacoes: 567,
+                assinaturas: 189,
+                tags: ["javascript", "arrays", "métodos", "estruturas de dados"]
+            },
+            {
+                id: "4",
+                titulo: "Classes e Herança em Java",
+                descricao: "Fundamentos de Programação Orientada a Objetos com Java: classes, herança, polimorfismo",
+                categoria: "Programação Orientada a Objetos",
+                status: "recusado",
+                versao: "1.2",
+                autor: {
                     id: "3",
-                    titulo: "Termo de Confidencialidade - Dados Sensíveis",
-                    descricao: "Termo para garantia de sigilo de informações confidenciais",
-                    categoria: "Confidencialidade",
-                    status: "aprovado",
-                    versao: "3.0",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-10",
-                    dataPublicacao: "2024-02-12",
-                    visualizacoes: 567,
-                    assinaturas: 189,
-                    tags: ["confidencialidade", "dados", "sigilo"]
+                    nome: "Maria Oliveira",
+                    tipo: "profissional"
                 },
-                {
-                    id: "4",
-                    titulo: "Termo de Adesão - Programa de Benefícios",
-                    descricao: "Termo para adesão ao programa de benefícios da instituição",
-                    categoria: "Adesão",
-                    status: "recusado",
-                    versao: "1.2",
-                    autor: {
-                        id: "3",
-                        nome: "Maria Oliveira",
-                        tipo: "profissional"
-                    },
-                    dataCriacao: "2024-02-05",
-                    dataArquivamento: "2024-02-08",
-                    visualizacoes: 123,
-                    assinaturas: 0,
-                    tags: ["benefícios", "adesão", "programa"]
+                dataCriacao: "2024-02-05",
+                dataArquivamento: "2024-02-08",
+                visualizacoes: 123,
+                assinaturas: 0,
+                tags: ["java", "poo", "classes", "herança", "polimorfismo"]
+            },
+            {
+                id: "5",
+                titulo: "Consultas SQL com JOIN",
+                descricao: "Tutorial avançado de consultas SQL utilizando INNER JOIN, LEFT JOIN e RIGHT JOIN",
+                categoria: "Banco de Dados",
+                status: "pendente",
+                versao: "1.5",
+                autor: {
+                    id: "2",
+                    nome: "João Silva",
+                    tipo: "gestor"
                 },
-                {
-                    id: "5",
-                    titulo: "Termo de Compromisso - Estágio",
-                    descricao: "Termo de compromisso para estágio curricular",
-                    categoria: "Compromisso",
-                    status: "pendente",
-                    versao: "1.5",
-                    autor: {
-                        id: "2",
-                        nome: "João Silva",
-                        tipo: "gestor"
-                    },
-                    dataCriacao: "2024-02-19",
-                    visualizacoes: 89,
-                    assinaturas: 0,
-                    tags: ["estágio", "compromisso", "curricular"]
+                dataCriacao: "2024-02-19",
+                visualizacoes: 89,
+                assinaturas: 0,
+                tags: ["sql", "banco de dados", "joins", "consultas"]
+            },
+            {
+                id: "6",
+                titulo: "Funções Recursivas",
+                descricao: "Conceitos e exemplos de recursividade em diferentes linguagens de programação",
+                categoria: "Funções",
+                status: "aprovado",
+                versao: "2.0",
+                autor: {
+                    id: "1",
+                    nome: "Admin Sistema",
+                    tipo: "admin"
                 },
-                {
-                    id: "6",
-                    titulo: "Termo de Autorização - Uso de Imagem",
-                    descricao: "Termo para autorização de uso de imagem e voz",
-                    categoria: "Autorização",
-                    status: "aprovado",
-                    versao: "2.0",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-01",
-                    dataPublicacao: "2024-02-03",
-                    visualizacoes: 892,
-                    assinaturas: 234,
-                    tags: ["imagem", "voz", "autorização"]
+                dataCriacao: "2024-02-01",
+                dataPublicacao: "2024-02-03",
+                visualizacoes: 892,
+                assinaturas: 234,
+                tags: ["recursividade", "funções", "algoritmos"]
+            },
+            {
+                id: "7",
+                titulo: "Variáveis e Tipos de Dados",
+                descricao: "Introdução aos tipos primitivos, variáveis e constantes em programação",
+                categoria: "Conceitos Básicos",
+                status: "arquivado",
+                versao: "1.0",
+                autor: {
+                    id: "3",
+                    nome: "Maria Oliveira",
+                    tipo: "profissional"
                 },
-                {
-                    id: "7",
-                    titulo: "Termo de Responsabilidade - Eventos",
-                    descricao: "Termo para participação em eventos externos",
-                    categoria: "Responsabilidade",
-                    status: "arquivado",
-                    versao: "1.0",
-                    autor: {
-                        id: "3",
-                        nome: "Maria Oliveira",
-                        tipo: "profissional"
-                    },
-                    dataCriacao: "2024-01-15",
-                    dataArquivamento: "2024-02-01",
-                    visualizacoes: 45,
-                    assinaturas: 12,
-                    tags: ["eventos", "responsabilidade", "participação"]
-                }
-            ];
+                dataCriacao: "2024-01-15",
+                dataArquivamento: "2024-02-01",
+                visualizacoes: 45,
+                assinaturas: 12,
+                tags: ["variáveis", "tipos de dados", "constantes", "iniciante"]
+            },
+            {
+                id: "8",
+                titulo: "TypeScript: Tipagem Estática",
+                descricao: "Guia completo sobre os benefícios e uso da tipagem estática com TypeScript",
+                categoria: "Linguagens de Programação",
+                status: "aprovado",
+                versao: "1.3",
+                autor: {
+                    id: "2",
+                    nome: "João Silva",
+                    tipo: "gestor"
+                },
+                dataCriacao: "2024-02-14",
+                dataPublicacao: "2024-02-16",
+                visualizacoes: 445,
+                assinaturas: 78,
+                tags: ["typescript", "tipagem", "javascript", "frontend"]
+            },
+            {
+                id: "9",
+                titulo: "Estruturas de Repetição: While e For",
+                descricao: "Diferenças entre while, do-while e for, com exemplos práticos",
+                categoria: "Estruturas de Controle",
+                status: "pendente",
+                versao: "2.2",
+                autor: {
+                    id: "1",
+                    nome: "Admin Sistema",
+                    tipo: "admin"
+                },
+                dataCriacao: "2024-02-17",
+                visualizacoes: 167,
+                assinaturas: 0,
+                tags: ["loops", "while", "for", "repetição"]
+            },
+            {
+                id: "10",
+                titulo: "Listas Encadeadas",
+                descricao: "Implementação de listas simplesmente e duplamente encadeadas",
+                categoria: "Estruturas de Dados",
+                status: "aprovado",
+                versao: "2.5",
+                autor: {
+                    id: "3",
+                    nome: "Maria Oliveira",
+                    tipo: "profissional"
+                },
+                dataCriacao: "2024-02-08",
+                dataPublicacao: "2024-02-11",
+                visualizacoes: 678,
+                assinaturas: 145,
+                tags: ["listas encadeadas", "ponteiros", "estruturas dinâmicas"]
+            }
+        ];
 
-            const filteredByStatus = activeTab === "todos"
-                ? mockTermos
-                : mockTermos.filter(t => t.status === activeTab);
+        const filteredByStatus = activeTab === "todos"
+            ? mockTermos
+            : mockTermos.filter(t => t.status === activeTab);
 
-            setTermos(filteredByStatus);
-        } catch (error) {
-            console.error("Erro ao buscar termos:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+        setTermos(filteredByStatus);
+    } catch (error) {
+        console.error("Erro ao buscar termos:", error);
+    } finally {
+        setLoading(false);
+    }
+};
 
     const handleSort = (key: string) => {
         setSortConfig({
@@ -359,10 +413,6 @@ export default function GerenciarTermos() {
         if (window.confirm(`Tem certeza que deseja arquivar o termo "${titulo}"?`)) {
             console.log("Arquivar termo:", id);
         }
-    };
-
-    const handleGenerateQR = (id: string, titulo: string) => {
-        navigate(`/gerar-qr?termo=${id}&titulo=${encodeURIComponent(titulo)}`);
     };
 
     if (loading) {
@@ -565,10 +615,13 @@ export default function GerenciarTermos() {
                                 >
                                     <td style={styles.tableCell}>
                                         <div style={styles.termoInfo}>
-                                            <FaFileAlt style={{ color: "var(--primary)" }} />
-                                            <div>
+                                            <FaFileAlt style={{ color: "var(--primary)", width: "20px", height: "20px" }} />
+                                            <div style={styles.termoContent}>
                                                 <div style={styles.termoTitle}>{termo.titulo}</div>
-                                                <div style={styles.termoDesc}>{termo.descricao.substring(0, 60)}...</div>
+                                                <div style={styles.termoDesc}>
+                                                    {termo.descricao?.substring(0, 60)}
+                                                    {termo.descricao?.length > 60 ? "..." : ""}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -581,9 +634,9 @@ export default function GerenciarTermos() {
                                     <td style={styles.tableCell}>
                                         <div style={styles.authorInfo}>
                                             <div style={styles.authorAvatar}>
-                                                {termo.autor.nome.charAt(0)}
+                                                {termo.autor?.nome?.charAt(0) || "?"}
                                             </div>
-                                            <span>{termo.autor.nome}</span>
+                                            <span>{termo.autor?.nome || "N/A"}</span>
                                         </div>
                                     </td>
                                     <td style={styles.tableCell}>
@@ -600,10 +653,10 @@ export default function GerenciarTermos() {
                                         <span style={styles.versionBadge}>v{termo.versao}</span>
                                     </td>
                                     <td style={styles.tableCell}>
-                                        <span style={styles.statBadge}>{termo.visualizacoes}</span>
+                                        <span style={styles.statBadge}>{termo.visualizacoes || 0}</span>
                                     </td>
                                     <td style={styles.tableCell}>
-                                        <span style={styles.statBadge}>{termo.assinaturas}</span>
+                                        <span style={styles.statBadge}>{termo.assinaturas || 0}</span>
                                     </td>
                                     <td style={styles.tableCell}>
                                         <div style={styles.actionButtons}>
@@ -620,20 +673,6 @@ export default function GerenciarTermos() {
                                                 title="Editar"
                                             >
                                                 <FaEdit />
-                                            </button>
-                                            <button
-                                                onClick={() => handleGenerateQR(termo.id, termo.titulo)}
-                                                style={styles.actionButton}
-                                                title="Gerar QR Code"
-                                            >
-                                                <FaQrcode />
-                                            </button>
-                                            <button
-                                                onClick={() => window.open(termo.arquivo || "#", "_blank")}
-                                                style={styles.actionButton}
-                                                title="Download PDF"
-                                            >
-                                                <FaFilePdf />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteTermo(termo.id, termo.titulo)}
@@ -668,7 +707,11 @@ export default function GerenciarTermos() {
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                             disabled={currentPage === 1}
-                            style={styles.paginationButton}
+                            style={{
+                                ...styles.paginationButton,
+                                opacity: currentPage === 1 ? 0.5 : 1,
+                                cursor: currentPage === 1 ? "not-allowed" : "pointer"
+                            }}
                         >
                             <FaChevronLeft />
                         </button>
@@ -680,7 +723,8 @@ export default function GerenciarTermos() {
                                 style={{
                                     ...styles.paginationButton,
                                     background: currentPage === page ? "var(--primary)" : "transparent",
-                                    color: currentPage === page ? "#fff" : "var(--text-secondary)"
+                                    color: currentPage === page ? "#fff" : "var(--text-secondary)",
+                                    borderColor: currentPage === page ? "var(--primary)" : "var(--border-color)"
                                 }}
                             >
                                 {page}
@@ -690,7 +734,11 @@ export default function GerenciarTermos() {
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                             disabled={currentPage === totalPages}
-                            style={styles.paginationButton}
+                            style={{
+                                ...styles.paginationButton,
+                                opacity: currentPage === totalPages ? 0.5 : 1,
+                                cursor: currentPage === totalPages ? "not-allowed" : "pointer"
+                            }}
                         >
                             <FaChevronRight />
                         </button>
@@ -701,7 +749,7 @@ export default function GerenciarTermos() {
     );
 }
 
-// Estilos otimizados - removidos os não utilizados
+// Estilos otimizados
 const styles: Record<string, React.CSSProperties> = {
     loadingContainer: {
         display: "flex",
@@ -763,11 +811,18 @@ const styles: Record<string, React.CSSProperties> = {
     tab: {
         padding: "8px 16px",
         borderRadius: "20px",
-        border: "1px solid",
+        border: "1px solid var(--border-color)",
+        background: "transparent",
         fontSize: "13px",
         fontWeight: "500",
         cursor: "pointer",
-        transition: "all 0.2s"
+        transition: "all 0.2s",
+        color: "var(--text-secondary)"
+    },
+    activeTab: {
+        background: "var(--primary)",
+        color: "#fff",
+        borderColor: "var(--primary)"
     },
     searchSection: {
         display: "flex",
@@ -787,24 +842,27 @@ const styles: Record<string, React.CSSProperties> = {
     },
     searchInput: {
         width: "100%",
-        padding: "12px 12px 12px 36px",
+        padding: "12px 12px 12px 40px",
         borderRadius: "8px",
         border: "1px solid var(--border-color)",
         background: "var(--input-bg)",
         color: "var(--text-primary)",
         fontSize: "14px",
-        outline: "none"
+        outline: "none",
+        transition: "border-color 0.2s"
     },
     filterToggle: {
         padding: "12px 20px",
         borderRadius: "8px",
-        border: "1px solid",
+        border: "1px solid var(--border-color)",
+        background: "var(--bg-secondary)",
         fontSize: "14px",
         display: "flex",
         alignItems: "center",
         gap: "8px",
         cursor: "pointer",
-        transition: "all 0.2s"
+        transition: "all 0.2s",
+        color: "var(--text-secondary)"
     },
     filtersPanel: {
         display: "flex",
@@ -813,7 +871,8 @@ const styles: Record<string, React.CSSProperties> = {
         padding: "16px",
         background: "var(--bg-tertiary)",
         borderRadius: "8px",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        alignItems: "center"
     },
     filterSelect: {
         padding: "10px",
@@ -822,7 +881,8 @@ const styles: Record<string, React.CSSProperties> = {
         background: "var(--input-bg)",
         color: "var(--text-primary)",
         fontSize: "13px",
-        minWidth: "150px"
+        minWidth: "150px",
+        outline: "none"
     },
     filterDate: {
         padding: "10px",
@@ -830,7 +890,8 @@ const styles: Record<string, React.CSSProperties> = {
         border: "1px solid var(--border-color)",
         background: "var(--input-bg)",
         color: "var(--text-primary)",
-        fontSize: "13px"
+        fontSize: "13px",
+        outline: "none"
     },
     clearFilters: {
         padding: "10px 16px",
@@ -839,14 +900,16 @@ const styles: Record<string, React.CSSProperties> = {
         background: "transparent",
         color: "var(--text-secondary)",
         fontSize: "13px",
-        cursor: "pointer"
+        cursor: "pointer",
+        transition: "all 0.2s"
     },
     tableContainer: {
         background: "var(--card-bg)",
         borderRadius: "12px",
         border: "1px solid var(--border-color)",
         overflow: "auto",
-        marginBottom: "24px"
+        marginBottom: "24px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
     },
     table: {
         width: "100%",
@@ -864,7 +927,8 @@ const styles: Record<string, React.CSSProperties> = {
         fontWeight: "600",
         color: "var(--text-tertiary)",
         textTransform: "uppercase",
-        cursor: "pointer"
+        cursor: "pointer",
+        transition: "color 0.2s"
     },
     sortableHeader: {
         display: "flex",
@@ -872,27 +936,33 @@ const styles: Record<string, React.CSSProperties> = {
         gap: "4px"
     },
     tableRow: {
-        borderBottom: "1px solid var(--border-light)",
+        borderBottom: "1px solid var(--border-color)",
         transition: "background-color 0.2s"
     },
     tableCell: {
         padding: "16px",
         fontSize: "13px",
-        color: "var(--text-secondary)"
+        color: "var(--text-secondary)",
+        textAlign: "left"
     },
     termoInfo: {
         display: "flex",
         alignItems: "center",
         gap: "12px"
     },
+    termoContent: {
+        flex: 1
+    },
     termoTitle: {
         fontWeight: "500",
         color: "var(--text-primary)",
-        marginBottom: "4px"
+        marginBottom: "4px",
+        fontSize: "14px"
     },
     termoDesc: {
         fontSize: "12px",
-        color: "var(--text-tertiary)"
+        color: "var(--text-tertiary)",
+        lineHeight: "1.4"
     },
     categoryBadge: {
         padding: "4px 8px",
@@ -900,7 +970,8 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: "11px",
         fontWeight: "600",
         background: "var(--primary-soft)",
-        color: "var(--primary)"
+        color: "var(--primary)",
+        display: "inline-block"
     },
     authorInfo: {
         display: "flex",
@@ -917,7 +988,8 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: "center",
         justifyContent: "center",
         fontSize: "12px",
-        fontWeight: "600"
+        fontWeight: "600",
+        textTransform: "uppercase"
     },
     publishDate: {
         fontSize: "11px",
@@ -930,19 +1002,21 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: "11px",
         fontWeight: "600",
         background: "var(--bg-tertiary)",
-        color: "var(--text-tertiary)"
+        color: "var(--text-tertiary)",
+        display: "inline-block"
     },
     statBadge: {
         padding: "4px 8px",
         borderRadius: "4px",
         fontSize: "11px",
         background: "var(--bg-tertiary)",
-        color: "var(--text-secondary)"
+        color: "var(--text-secondary)",
+        display: "inline-block"
     },
     actionButtons: {
         display: "flex",
         gap: "8px",
-        flexWrap: "wrap"
+        justifyContent: "flex-start"
     },
     actionButton: {
         background: "none",
@@ -950,13 +1024,16 @@ const styles: Record<string, React.CSSProperties> = {
         cursor: "pointer",
         color: "var(--text-secondary)",
         fontSize: "14px",
-        padding: "4px",
+        padding: "6px",
         borderRadius: "4px",
-        transition: "all 0.2s"
+        transition: "all 0.2s",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
     },
     emptyState: {
         textAlign: "center",
-        padding: "48px"
+        padding: "48px 24px"
     },
     emptyTitle: {
         fontSize: "16px",
@@ -966,12 +1043,14 @@ const styles: Record<string, React.CSSProperties> = {
     },
     emptyText: {
         fontSize: "14px",
-        color: "var(--text-tertiary)"
+        color: "var(--text-tertiary)",
+        margin: 0
     },
     pagination: {
         display: "flex",
         justifyContent: "center",
-        gap: "8px"
+        gap: "8px",
+        marginTop: "24px"
     },
     paginationButton: {
         width: "36px",
@@ -983,7 +1062,9 @@ const styles: Record<string, React.CSSProperties> = {
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        transition: "all 0.2s",
+        fontSize: "14px"
     }
 };
 

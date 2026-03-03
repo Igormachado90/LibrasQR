@@ -1867,12 +1867,12 @@
 //     0% { transform: rotate(0deg); }
 //     100% { transform: rotate(360deg); }
 //   }
-  
+
 //   @keyframes fadeIn {
 //     from { opacity: 0; transform: translateY(10px); }
 //     to { opacity: 1; transform: translateY(0); }
 //   }
-  
+
 //   @keyframes slideIn {
 //     from { transform: translateX(100%); }
 //     to { transform: translateX(0); }
@@ -2017,7 +2017,7 @@ export default function GerarQRCode() {
     const [showPreview, setShowPreview] = useState(true);
     const [showSuccess, setShowSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
-    
+
     // Configurações de download
     const [downloadFormat, setDownloadFormat] = useState<"png" | "svg" | "jpg">("png");
     const [qrSize, setQrSize] = useState(256);
@@ -2032,14 +2032,14 @@ export default function GerarQRCode() {
 
         if (termoId && termoTitulo) {
             fetchTermoData(termoId, decodeURIComponent(termoTitulo));
-        } 
+        }
         // else {
         //     navigate("/termos/gerenciar");
         // }
     }, [location, navigate]);
 
     const fetchTermoData = async (id: string, titulo: string) => {
-        
+
         try {
             // Simular busca de dados do termo
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -2056,7 +2056,7 @@ export default function GerarQRCode() {
             };
 
             setTermo(termoData);
-            
+
             // Gerar URL do termo
             const url = `${window.location.origin}/termo/${id}`;
             setQrValue(url);
@@ -2070,7 +2070,7 @@ export default function GerarQRCode() {
 
         setSuccessMessage("QR Code baixado com sucesso!");
         setShowSuccess(true);
-        
+
         // Simular download
         setTimeout(() => {
             console.log("Download QR Code:", {
@@ -2111,7 +2111,161 @@ export default function GerarQRCode() {
     };
 
     const handlePrint = () => {
-        window.print();
+        // Abrir uma nova janela
+        const printWindow = window.open();
+
+        // Verificar se a janela foi aberta com sucesso
+        if (!printWindow) {
+            alert('Não foi possível abrir a janela de impressão. Verifique as configurações do seu navegador.');
+            return;
+        }
+
+        // Criar o conteúdo HTML apenas com o QR Code
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>QR Code</title>
+                <style>
+                    body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                    background-color: #fff;
+                }
+                .qr-container {
+                    text-align: center;
+                    padding: 30px;
+                    max-width: 600px;
+                    width: 100%;
+                }
+                .qr-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                    color: #333;
+                }
+                #qr-code {
+                    display: flex;
+                    justify-content: center;
+                    margin: 20px 0;
+                }
+                #qr-code canvas {
+                    max-width: 100%;
+                    height: auto;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                }
+                    .qr-info {
+                        margin-top: 20px;
+                        padding: 15px;
+                    background-color: #f5f5f5;
+                    border-radius: 8px;
+                    }
+                    .qr-link {
+                        word-break: break-all;
+                        font-size: 14px;
+                        color: #666;
+                        margin: 10px 0;
+                        padding: 10px;
+                        background-color: #fff;
+                        border-radius: 4px;
+                    }
+                    .qr-footer {
+                        margin-top: 20px;
+                        font-size: 12px;
+                        color: #999;
+                    }
+                    @media print {
+                        body {
+                            min-height: auto;
+                            padding: 20px;
+                        }
+                            .qr-container {
+                        padding: 0;
+                        }
+                        .qr-info {
+                            background-color: #fff;
+                            border: 1px solid #eee;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="qr-container">
+                <div class="qr-title">QR Code - ${termo?.titulo}</div>
+                <div id="qr-code"></div>
+                <div class="qr-info">
+                    <div style="font-weight: bold; margin-bottom: 5px;">Link do termo:</div>
+                    <div class="qr-link">${qrValue}</div>
+                    <p style="margin: 10px 0 0 0;">Escaneie com qualquer leitor de QR Code para acessar o termo</p>
+                </div>
+                <div class="qr-footer">
+                    Gerado em: ${new Date().toLocaleDateString('pt-BR')}
+                </div>
+            </div>
+                
+                <!-- Incluir biblioteca QRCode -->
+                <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"><\/script>
+                <script>
+                 // Aguardar o carregamento completo da página
+                window.onload = function() {
+                    // Elemento onde o QR Code será renderizado
+                    const qrContainer = document.getElementById('qr-code');
+                    
+                    // Configurações do QR Code
+                    const options = {
+                        width: ${qrSize},
+                        margin: ${includeMargin ? 2 : 1},
+                        color: {
+                            dark: '#000000',
+                            light: '#FFFFFF'
+                        },
+                        errorCorrectionLevel: '${errorCorrection}'
+                    };
+
+                    // Gerar QR Code
+                    QRCode.toCanvas('${qrValue}', options, function(error, canvas) {
+                        if (error) {
+                            console.error('Erro ao gerar QR Code:', error);
+                            qrContainer.innerHTML = '<p style="color: red;">Erro ao gerar QR Code</p>';
+                            return;
+                        }
+                        
+                        // Limpar container e adicionar o canvas
+                        qrContainer.innerHTML = '';
+                        qrContainer.appendChild(canvas);
+                        
+                        // Adicionar um pequeno delay para garantir que o canvas foi renderizado
+                        setTimeout(function() {
+                            // Iniciar impressão automaticamente
+                            window.print();
+                        }, 100);
+                    });
+                }
+                    // Fechar a janela após impressão
+                window.onafterprint = function() {
+                    setTimeout(function() {
+                        window.close();
+                    }, 500);
+                };
+
+                // Se o usuário cancelar a impressão, fechar a janela após 30 segundos
+                setTimeout(function() {
+                    if (!window.closed) {
+                        window.close();
+                    }
+                }, 30000);
+                <\/script>
+            </body>
+        </html>
+    `);
+
+        
+            printWindow.document.close();
+        
     };
 
     // const handleVoltar = () => {
@@ -2124,7 +2278,7 @@ export default function GerarQRCode() {
         }
     };
 
-    
+
 
 
     return (
@@ -2204,7 +2358,7 @@ export default function GerarQRCode() {
 
                             {showPreview && (
                                 <div style={styles.previewContent}>
-                                    <div 
+                                    <div
                                         ref={qrRef}
                                         style={{
                                             ...styles.qrCodeContainer,
@@ -2243,7 +2397,7 @@ export default function GerarQRCode() {
                                 <div style={styles.previewPlaceholder}>
                                     <FaEyeSlash size={48} color="var(--text-tertiary)" />
                                     <p>Pré-visualização ocultada</p>
-                                    <button 
+                                    <button
                                         onClick={() => setShowPreview(true)}
                                         style={styles.showPreviewButton}
                                     >
