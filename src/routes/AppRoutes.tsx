@@ -353,11 +353,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Dashboard from "../pages/Dashboard";
 import Cursos from "../pages/Cursos";
-import AlunoForm from "../pages/AlunoForm";
+import CursoForm from "../pages/CursoForm";
 import Profissionais from "../pages/Profissionais";
 import ProfissionalForm from "../pages/ProfissionalForm";
 import MateriaisDidaticos from "../pages/MateriaisDidaticos";
-import DisciplinasForm from "../pages/DisciplinasForm";
+import MateriaisForm from "../pages/MateriaisForm";
 import Agenda from "../pages/Agenda";
 import Termos from "../pages/GerenciarTermos";
 import EscolasForm from "../pages/CadastrarTermo";
@@ -376,6 +376,7 @@ import Disponibilidade from "../pages/Disponibilidade";
 import DisponibilidadeForm from "../pages/DisponibilidadeForm";
 import Notificacoes from "../pages/Notificacoes";
 import LandingPage from "../pages/LandingPage";
+import CursoView from "../pages/CursoView";
 
 export default function AppRoutes() {
     return (
@@ -425,11 +426,15 @@ export default function AppRoutes() {
                 />
                 <Route
                     path="/curso/novo"
-                    element={<AlunoForm />}
+                    element={<CursoForm />}
                 />
                 <Route
                     path="/curso/:id/editar"
-                    element={<AlunoForm />}
+                    element={<CursoForm />}
+                />
+                <Route
+                    path="/curso/:id"
+                    element={<CursoView />}
                 />
                 <Route
                     path="/aprovarRecusar"
@@ -476,12 +481,12 @@ export default function AppRoutes() {
                     element={<MateriaisDidaticos />}
                 />
                 <Route
-                    path="/materiais-didaticos/novo"
-                    element={<DisciplinasForm />}
+                    path="/materiais/novo"
+                    element={<MateriaisForm />}
                 />
                 <Route
-                    path="/materiais-didaticos/:id/editar"
-                    element={<DisciplinasForm />}
+                    path="/materiais/:id/editar"
+                    element={<MateriaisForm />}
                 />
                 <Route
                     path="/gerar-qr"

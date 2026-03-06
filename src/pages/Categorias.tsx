@@ -1173,8 +1173,8 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: "24px"
   },
   paginationButton: {
-    width: "36px",
-    height: "36px",
+    // width: "36px",
+    // height: "36px",
     borderRadius: "8px",
     border: "1px solid var(--border-color)",
     background: "transparent",
@@ -1247,7 +1247,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: "6px"
   },
   input: {
-    width: "100%",
+    width: "95%",
     padding: "10px 12px",
     borderRadius: "8px",
     border: "1px solid var(--border-color)",
@@ -1258,7 +1258,7 @@ const styles: Record<string, React.CSSProperties> = {
     transition: "border-color 0.2s"
   },
   textarea: {
-    width: "100%",
+    width: "95%",
     padding: "10px 12px",
     borderRadius: "8px",
     border: "1px solid var(--border-color)",

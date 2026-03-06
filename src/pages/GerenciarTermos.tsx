@@ -113,216 +113,216 @@ export default function GerenciarTermos() {
     const itemsPerPage = 10;
 
     const categorias = [
-    "Conceitos Básicos",
-    "Estruturas de Controle", 
-    "Estruturas de Dados",
-    "Programação Orientada a Objetos",
-    "Algoritmos",
-    "Banco de Dados",
-    "Funções",
-    "Linguagens de Programação"
-];
+        "Conceitos Básicos",
+        "Estruturas de Controle",
+        "Estruturas de Dados",
+        "Programação Orientada a Objetos",
+        "Algoritmos",
+        "Banco de Dados",
+        "Funções",
+        "Linguagens de Programação"
+    ];
 
-useEffect(() => {
-    fetchTermos();
-}, [activeTab]);
+    useEffect(() => {
+        fetchTermos();
+    }, [activeTab]);
 
-const fetchTermos = async () => {
-    setLoading(true);
-    try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    const fetchTermos = async () => {
+        setLoading(true);
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-        const mockTermos: Termo[] = [
-            {
-                id: "1",
-                titulo: "Algoritmos de Ordenação - Quick Sort",
-                descricao: "Implementação e análise do algoritmo de ordenação Quick Sort em diferentes linguagens",
-                categoria: "Algoritmos",
-                status: "aprovado",
-                versao: "2.1",
-                autor: {
+            const mockTermos: Termo[] = [
+                {
                     id: "1",
-                    nome: "Admin Sistema",
-                    tipo: "admin"
+                    titulo: "Algoritmos de Ordenação - Quick Sort",
+                    descricao: "Implementação e análise do algoritmo de ordenação Quick Sort em diferentes linguagens",
+                    categoria: "Algoritmos",
+                    status: "aprovado",
+                    versao: "2.1",
+                    autor: {
+                        id: "1",
+                        nome: "Admin Sistema",
+                        tipo: "admin"
+                    },
+                    dataCriacao: "2024-02-15",
+                    dataPublicacao: "2024-02-20",
+                    visualizacoes: 234,
+                    assinaturas: 45,
+                    tags: ["quick sort", "ordenação", "algoritmos", "complexidade"]
                 },
-                dataCriacao: "2024-02-15",
-                dataPublicacao: "2024-02-20",
-                visualizacoes: 234,
-                assinaturas: 45,
-                tags: ["quick sort", "ordenação", "algoritmos", "complexidade"]
-            },
-            {
-                id: "2",
-                titulo: "Estruturas Condicionais em Python",
-                descricao: "Guia completo sobre if/else, elif e estruturas de decisão em Python",
-                categoria: "Estruturas de Controle",
-                status: "pendente",
-                versao: "1.0",
-                autor: {
+                {
                     id: "2",
-                    nome: "João Silva",
-                    tipo: "gestor"
+                    titulo: "Estruturas Condicionais em Python",
+                    descricao: "Guia completo sobre if/else, elif e estruturas de decisão em Python",
+                    categoria: "Estruturas de Controle",
+                    status: "pendente",
+                    versao: "1.0",
+                    autor: {
+                        id: "2",
+                        nome: "João Silva",
+                        tipo: "gestor"
+                    },
+                    dataCriacao: "2024-02-18",
+                    visualizacoes: 56,
+                    assinaturas: 0,
+                    tags: ["python", "if-else", "condicionais", "estruturas de controle"]
                 },
-                dataCriacao: "2024-02-18",
-                visualizacoes: 56,
-                assinaturas: 0,
-                tags: ["python", "if-else", "condicionais", "estruturas de controle"]
-            },
-            {
-                id: "3",
-                titulo: "Manipulação de Arrays em JavaScript",
-                descricao: "Métodos avançados para manipulação de arrays: map, filter, reduce, forEach",
-                categoria: "Estruturas de Dados",
-                status: "aprovado",
-                versao: "3.0",
-                autor: {
-                    id: "1",
-                    nome: "Admin Sistema",
-                    tipo: "admin"
-                },
-                dataCriacao: "2024-02-10",
-                dataPublicacao: "2024-02-12",
-                visualizacoes: 567,
-                assinaturas: 189,
-                tags: ["javascript", "arrays", "métodos", "estruturas de dados"]
-            },
-            {
-                id: "4",
-                titulo: "Classes e Herança em Java",
-                descricao: "Fundamentos de Programação Orientada a Objetos com Java: classes, herança, polimorfismo",
-                categoria: "Programação Orientada a Objetos",
-                status: "recusado",
-                versao: "1.2",
-                autor: {
+                {
                     id: "3",
-                    nome: "Maria Oliveira",
-                    tipo: "profissional"
+                    titulo: "Manipulação de Arrays em JavaScript",
+                    descricao: "Métodos avançados para manipulação de arrays: map, filter, reduce, forEach",
+                    categoria: "Estruturas de Dados",
+                    status: "aprovado",
+                    versao: "3.0",
+                    autor: {
+                        id: "1",
+                        nome: "Admin Sistema",
+                        tipo: "admin"
+                    },
+                    dataCriacao: "2024-02-10",
+                    dataPublicacao: "2024-02-12",
+                    visualizacoes: 567,
+                    assinaturas: 189,
+                    tags: ["javascript", "arrays", "métodos", "estruturas de dados"]
                 },
-                dataCriacao: "2024-02-05",
-                dataArquivamento: "2024-02-08",
-                visualizacoes: 123,
-                assinaturas: 0,
-                tags: ["java", "poo", "classes", "herança", "polimorfismo"]
-            },
-            {
-                id: "5",
-                titulo: "Consultas SQL com JOIN",
-                descricao: "Tutorial avançado de consultas SQL utilizando INNER JOIN, LEFT JOIN e RIGHT JOIN",
-                categoria: "Banco de Dados",
-                status: "pendente",
-                versao: "1.5",
-                autor: {
-                    id: "2",
-                    nome: "João Silva",
-                    tipo: "gestor"
+                {
+                    id: "4",
+                    titulo: "Classes e Herança em Java",
+                    descricao: "Fundamentos de Programação Orientada a Objetos com Java: classes, herança, polimorfismo",
+                    categoria: "Programação Orientada a Objetos",
+                    status: "recusado",
+                    versao: "1.2",
+                    autor: {
+                        id: "3",
+                        nome: "Maria Oliveira",
+                        tipo: "profissional"
+                    },
+                    dataCriacao: "2024-02-05",
+                    dataArquivamento: "2024-02-08",
+                    visualizacoes: 123,
+                    assinaturas: 0,
+                    tags: ["java", "poo", "classes", "herança", "polimorfismo"]
                 },
-                dataCriacao: "2024-02-19",
-                visualizacoes: 89,
-                assinaturas: 0,
-                tags: ["sql", "banco de dados", "joins", "consultas"]
-            },
-            {
-                id: "6",
-                titulo: "Funções Recursivas",
-                descricao: "Conceitos e exemplos de recursividade em diferentes linguagens de programação",
-                categoria: "Funções",
-                status: "aprovado",
-                versao: "2.0",
-                autor: {
-                    id: "1",
-                    nome: "Admin Sistema",
-                    tipo: "admin"
+                {
+                    id: "5",
+                    titulo: "Consultas SQL com JOIN",
+                    descricao: "Tutorial avançado de consultas SQL utilizando INNER JOIN, LEFT JOIN e RIGHT JOIN",
+                    categoria: "Banco de Dados",
+                    status: "pendente",
+                    versao: "1.5",
+                    autor: {
+                        id: "2",
+                        nome: "João Silva",
+                        tipo: "gestor"
+                    },
+                    dataCriacao: "2024-02-19",
+                    visualizacoes: 89,
+                    assinaturas: 0,
+                    tags: ["sql", "banco de dados", "joins", "consultas"]
                 },
-                dataCriacao: "2024-02-01",
-                dataPublicacao: "2024-02-03",
-                visualizacoes: 892,
-                assinaturas: 234,
-                tags: ["recursividade", "funções", "algoritmos"]
-            },
-            {
-                id: "7",
-                titulo: "Variáveis e Tipos de Dados",
-                descricao: "Introdução aos tipos primitivos, variáveis e constantes em programação",
-                categoria: "Conceitos Básicos",
-                status: "arquivado",
-                versao: "1.0",
-                autor: {
-                    id: "3",
-                    nome: "Maria Oliveira",
-                    tipo: "profissional"
+                {
+                    id: "6",
+                    titulo: "Funções Recursivas",
+                    descricao: "Conceitos e exemplos de recursividade em diferentes linguagens de programação",
+                    categoria: "Funções",
+                    status: "aprovado",
+                    versao: "2.0",
+                    autor: {
+                        id: "1",
+                        nome: "Admin Sistema",
+                        tipo: "admin"
+                    },
+                    dataCriacao: "2024-02-01",
+                    dataPublicacao: "2024-02-03",
+                    visualizacoes: 892,
+                    assinaturas: 234,
+                    tags: ["recursividade", "funções", "algoritmos"]
                 },
-                dataCriacao: "2024-01-15",
-                dataArquivamento: "2024-02-01",
-                visualizacoes: 45,
-                assinaturas: 12,
-                tags: ["variáveis", "tipos de dados", "constantes", "iniciante"]
-            },
-            {
-                id: "8",
-                titulo: "TypeScript: Tipagem Estática",
-                descricao: "Guia completo sobre os benefícios e uso da tipagem estática com TypeScript",
-                categoria: "Linguagens de Programação",
-                status: "aprovado",
-                versao: "1.3",
-                autor: {
-                    id: "2",
-                    nome: "João Silva",
-                    tipo: "gestor"
+                {
+                    id: "7",
+                    titulo: "Variáveis e Tipos de Dados",
+                    descricao: "Introdução aos tipos primitivos, variáveis e constantes em programação",
+                    categoria: "Conceitos Básicos",
+                    status: "arquivado",
+                    versao: "1.0",
+                    autor: {
+                        id: "3",
+                        nome: "Maria Oliveira",
+                        tipo: "profissional"
+                    },
+                    dataCriacao: "2024-01-15",
+                    dataArquivamento: "2024-02-01",
+                    visualizacoes: 45,
+                    assinaturas: 12,
+                    tags: ["variáveis", "tipos de dados", "constantes", "iniciante"]
                 },
-                dataCriacao: "2024-02-14",
-                dataPublicacao: "2024-02-16",
-                visualizacoes: 445,
-                assinaturas: 78,
-                tags: ["typescript", "tipagem", "javascript", "frontend"]
-            },
-            {
-                id: "9",
-                titulo: "Estruturas de Repetição: While e For",
-                descricao: "Diferenças entre while, do-while e for, com exemplos práticos",
-                categoria: "Estruturas de Controle",
-                status: "pendente",
-                versao: "2.2",
-                autor: {
-                    id: "1",
-                    nome: "Admin Sistema",
-                    tipo: "admin"
+                {
+                    id: "8",
+                    titulo: "TypeScript: Tipagem Estática",
+                    descricao: "Guia completo sobre os benefícios e uso da tipagem estática com TypeScript",
+                    categoria: "Linguagens de Programação",
+                    status: "aprovado",
+                    versao: "1.3",
+                    autor: {
+                        id: "2",
+                        nome: "João Silva",
+                        tipo: "gestor"
+                    },
+                    dataCriacao: "2024-02-14",
+                    dataPublicacao: "2024-02-16",
+                    visualizacoes: 445,
+                    assinaturas: 78,
+                    tags: ["typescript", "tipagem", "javascript", "frontend"]
                 },
-                dataCriacao: "2024-02-17",
-                visualizacoes: 167,
-                assinaturas: 0,
-                tags: ["loops", "while", "for", "repetição"]
-            },
-            {
-                id: "10",
-                titulo: "Listas Encadeadas",
-                descricao: "Implementação de listas simplesmente e duplamente encadeadas",
-                categoria: "Estruturas de Dados",
-                status: "aprovado",
-                versao: "2.5",
-                autor: {
-                    id: "3",
-                    nome: "Maria Oliveira",
-                    tipo: "profissional"
+                {
+                    id: "9",
+                    titulo: "Estruturas de Repetição: While e For",
+                    descricao: "Diferenças entre while, do-while e for, com exemplos práticos",
+                    categoria: "Estruturas de Controle",
+                    status: "pendente",
+                    versao: "2.2",
+                    autor: {
+                        id: "1",
+                        nome: "Admin Sistema",
+                        tipo: "admin"
+                    },
+                    dataCriacao: "2024-02-17",
+                    visualizacoes: 167,
+                    assinaturas: 0,
+                    tags: ["loops", "while", "for", "repetição"]
                 },
-                dataCriacao: "2024-02-08",
-                dataPublicacao: "2024-02-11",
-                visualizacoes: 678,
-                assinaturas: 145,
-                tags: ["listas encadeadas", "ponteiros", "estruturas dinâmicas"]
-            }
-        ];
+                {
+                    id: "10",
+                    titulo: "Listas Encadeadas",
+                    descricao: "Implementação de listas simplesmente e duplamente encadeadas",
+                    categoria: "Estruturas de Dados",
+                    status: "aprovado",
+                    versao: "2.5",
+                    autor: {
+                        id: "3",
+                        nome: "Maria Oliveira",
+                        tipo: "profissional"
+                    },
+                    dataCriacao: "2024-02-08",
+                    dataPublicacao: "2024-02-11",
+                    visualizacoes: 678,
+                    assinaturas: 145,
+                    tags: ["listas encadeadas", "ponteiros", "estruturas dinâmicas"]
+                }
+            ];
 
-        const filteredByStatus = activeTab === "todos"
-            ? mockTermos
-            : mockTermos.filter(t => t.status === activeTab);
+            const filteredByStatus = activeTab === "todos"
+                ? mockTermos
+                : mockTermos.filter(t => t.status === activeTab);
 
-        setTermos(filteredByStatus);
-    } catch (error) {
-        console.error("Erro ao buscar termos:", error);
-    } finally {
-        setLoading(false);
-    }
-};
+            setTermos(filteredByStatus);
+        } catch (error) {
+            console.error("Erro ao buscar termos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSort = (key: string) => {
         setSortConfig({
@@ -826,12 +826,20 @@ const styles: Record<string, React.CSSProperties> = {
     },
     searchSection: {
         display: "flex",
-        gap: "12px",
-        marginBottom: "20px"
+        alignItems: 'center',
+        gap: "1rem",
+        marginBottom: "12px",
+        padding: '0.5rem',
+        background: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        transition: 'box-shadow 0.3s ease',
     },
     searchBox: {
         flex: 1,
-        position: "relative"
+        position: "relative",
+        display: "flex",
+        alignItems: "center"
     },
     searchIcon: {
         position: "absolute",
@@ -901,7 +909,9 @@ const styles: Record<string, React.CSSProperties> = {
         color: "var(--text-secondary)",
         fontSize: "13px",
         cursor: "pointer",
-        transition: "all 0.2s"
+        transition: "all 0.2s",
+        display: "flex",
+        alignItems: "center"
     },
     tableContainer: {
         background: "var(--card-bg)",

@@ -96,7 +96,8 @@ import {
     FaShare,
     FaPrint,
     FaCheck,
-    FaTimes
+    FaTimes,
+    FaBookOpen
 } from "react-icons/fa";
 
 interface MaterialDidatico {
@@ -108,7 +109,7 @@ interface MaterialDidatico {
         nome: string;
         modulo?: string;
     };
-    tipo: "pdf" | "documento" | "imagem" | "texto";
+    tipo: "pdf" | "Livro" | "imagem" | "texto";
     arquivo: {
         nome: string;
         tamanho: number;
@@ -128,7 +129,7 @@ interface MaterialDidatico {
         dataGeracao: string;
         scans: number;
     };
-    status: "rascunho" | "publicado" | "arquivado";
+    status: "publicado" | "rascunho" | "arquivado";
     dataCriacao: string;
     dataPublicacao?: string;
     autor: {
@@ -199,12 +200,10 @@ export default function GerenciarMateriaisDidaticos() {
 
     const tiposMateriais = [
         { value: "pdf", label: "PDF", icon: <FaFilePdf /> },
-        { value: "documento", label: "Documento", icon: <FaFileWord /> },
+        { value: "Livro", label: "Livro", icon: <FaBookOpen /> },
         // { value: "apresentacao", label: "Apresentação", icon: <FaFilePowerpoint /> },
-        { value: "planilha", label: "Planilha", icon: <FaFileExcel /> },
         { value: "imagem", label: "Imagem", icon: <FaFileImage /> },
         { value: "video", label: "Vídeo", icon: <FaVideo /> },
-        { value: "texto", label: "Texto", icon: <FaFileAlt /> }
     ];
 
     useEffect(() => {
@@ -359,7 +358,7 @@ export default function GerenciarMateriaisDidaticos() {
                         nome: "Linguagens de Programação",
                         modulo: "Módulo 1 - Paradigmas (30 páginas)"
                     },
-                    tipo: "documento",
+                    tipo: "Livro",
                     arquivo: {
                         nome: "paradigmas_programacao.docx",
                         tamanho: 2.1 * 1024 * 1024,
@@ -398,7 +397,7 @@ export default function GerenciarMateriaisDidaticos() {
                         nome: "Estrutura de Dados",
                         modulo: "Módulo 4 - Algoritmos (35 páginas)"
                     },
-                    tipo: "documento",
+                    tipo: "Livro",
                     arquivo: {
                         nome: "algoritmos_ordenacao.mp4",
                         tamanho: 52 * 1024 * 1024,
@@ -775,7 +774,7 @@ export default function GerenciarMateriaisDidaticos() {
                                 <tr key={material.id} style={styles.tableRow}>
                                     <td style={styles.tableCell}>
                                         <div style={styles.materialInfo}>
-                                            {getTipoIcon(material.tipo)}
+                                            <span style={{...styles.materialIcon, fontSize: '24px'}}>{getTipoIcon(material.tipo)}</span>
                                             <div>
                                                 <div style={styles.materialTitulo}>{material.titulo}</div>
                                                 <div style={styles.materialDesc}>{material.descricao.substring(0, 60)}...</div>
@@ -843,7 +842,7 @@ export default function GerenciarMateriaisDidaticos() {
                                     </td>
                                     <td style={styles.tableCell}>
                                         <div style={styles.qrCodeInfo}>
-                                            {!material.qrCode.imagem ? (
+                                            {/* {!material.qrCode.imagem ? (
                                                 <img
                                                     src={material.qrCode.imagem}
                                                     alt="QR Code"
@@ -853,7 +852,7 @@ export default function GerenciarMateriaisDidaticos() {
                                                 <div style={styles.qrCodeIcon}>
                                                     <FaQrcode size={32} />
                                                 </div>
-                                            )}
+                                            )} */}
                                             <div>
                                                 <div style={styles.qrCodeScans}>
                                                     <FaEye size={10} />
@@ -1174,12 +1173,20 @@ const styles: Record<string, React.CSSProperties> = {
     },
     searchSection: {
         display: "flex",
-        gap: "12px",
-        marginBottom: "16px"
+        alignItems: 'center',
+        gap: "1rem",
+        marginBottom: "12px",
+        padding: '0.5rem',
+        background: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        transition: 'box-shadow 0.3s ease',
     },
     searchBox: {
         flex: 1,
-        position: "relative"
+        position: "relative",
+        display: "flex",
+        alignItems: "center"
     },
     searchIcon: {
         position: "absolute",
@@ -1196,7 +1203,8 @@ const styles: Record<string, React.CSSProperties> = {
         background: "var(--input-bg)",
         color: "var(--text-primary)",
         fontSize: "14px",
-        outline: "none"
+        outline: "none",
+        transition: "border-color 0.2s",
     },
     filterButton: {
         padding: "12px 20px",
@@ -1280,6 +1288,10 @@ const styles: Record<string, React.CSSProperties> = {
         display: "flex",
         alignItems: "center",
         gap: "12px"
+    },
+    materialIcon: {
+        width: "2rem",
+        height: "2rem",
     },
     materialTitulo: {
         fontWeight: "500",
@@ -1401,13 +1413,13 @@ const styles: Record<string, React.CSSProperties> = {
         marginBottom: "4px"
     },
     qrCodeButton: {
-        background: "none",
+        background: "var(--primary-soft)",
         border: "none",
         color: "var(--primary)",
         fontSize: "11px",
         display: "flex",
         alignItems: "center",
-        gap: "4px",
+        // gap: "4px",
         cursor: "pointer"
     },
     statusBadge: {

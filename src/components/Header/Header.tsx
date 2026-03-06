@@ -129,6 +129,7 @@
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import ThemeToggle from "../Theme/ThemeToggle";
+import { FaSearch } from "react-icons/fa";
 
 
 export default function Header() {
@@ -224,7 +225,7 @@ export default function Header() {
             color: "var(--text-tertiary)",
             fontSize: "16px"
           }}>
-            🔍
+            <FaSearch />
           </span>
         </div>
       </div>

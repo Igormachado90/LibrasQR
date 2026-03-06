@@ -1201,14 +1201,20 @@ const styles: Record<string, React.CSSProperties> = {
     },
     searchSection: {
         display: "flex",
-        gap: "16px",
-        marginBottom: "24px",
-        flexWrap: "wrap"
+        alignItems: 'center',
+        gap: "1rem",
+        marginBottom: "12px",
+        padding: '0.5rem',
+        background: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        transition: 'box-shadow 0.3s ease',
     },
     searchBox: {
         flex: 1,
         position: "relative",
-        minWidth: "280px"
+        display: "flex",
+        alignItems: "center"
     },
     searchIcon: {
         position: "absolute",
@@ -1225,7 +1231,8 @@ const styles: Record<string, React.CSSProperties> = {
         background: "var(--input-bg)",
         color: "var(--text-primary)",
         fontSize: "14px",
-        outline: "none"
+        outline: "none",
+        transition: "border-color 0.2s",
     },
     filterGroup: {
         display: "flex",

@@ -341,7 +341,8 @@ import {
     FaRegClock,
     FaGraduationCap,
     FaCloudUploadAlt,
-    FaChrome
+    FaChrome,
+    FaBookOpen
 } from "react-icons/fa";
 import { IoQrCode } from "react-icons/io5";
 
@@ -931,7 +932,7 @@ export default function DashboardPage() {
                     />
                     <StatCard
                         icon={<FaFileAlt size={24} />}
-                        label="Total de Termos"
+                        label="Total de Termos no Glossário"
                         value={formatNumber(stats.totalTermos)}
                         change="+12%"
                         changeType="positive"
@@ -1007,8 +1008,8 @@ export default function DashboardPage() {
 
                             <div style={styles.qrMetricCard}>
                                 <div style={styles.qrMetricHeader}>
-                                    <FaCalendarAlt size={20} color="var(--warning)" />
-                                    <span>Scans Hoje</span>
+                                    <FaBookOpen size={20} color="var(--warning)" />
+                                    <span>Cursos e Livros Ativos</span>
                                 </div>
                                 <div style={styles.qrMetricValue}>{formatNumber(stats.scansToday)}</div>
                             </div>

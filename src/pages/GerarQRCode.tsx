@@ -2002,8 +2002,8 @@ interface TermoInfo {
     autor: string;
     dataPublicacao: string;
     categoria: string;
-    descricao: string;
-    status: "publicado" | "rascunho" | "arquivado";
+    descricao?: string;
+    status?: "publicado" | "rascunho" | "arquivado";
 }
 
 export default function GerarQRCode() {
@@ -2826,8 +2826,8 @@ const styles: Record<string, React.CSSProperties> = {
         whiteSpace: "nowrap"
     },
     copyButton: {
-        width: "32px",
-        height: "32px",
+        // width: "32px",
+        // height: "32px",
         borderRadius: "6px",
         border: "1px solid var(--border-color)",
         background: "transparent",

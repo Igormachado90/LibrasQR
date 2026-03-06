@@ -1,5 +1,3 @@
-// 
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -896,15 +894,15 @@ export default function GerenciarCursos() {
     };
 
     const handleNovoCurso = () => {
-        navigate("/cursos/novo");
+        navigate("/curso/novo");
     };
 
     const handleEditarCurso = (id: string) => {
-        navigate(`/cursos/${id}/editar`);
+        navigate(`/curso/${id}/editar`);
     };
 
     const handleVisualizarCurso = (id: string) => {
-        window.open(`/cursos/${id}`, '_blank');
+        navigate(`/curso/${id}`);
     };
 
     const handleGerarQRCode = (curso: Curso) => {
@@ -1623,12 +1621,20 @@ const styles: Record<string, React.CSSProperties> = {
     },
     searchSection: {
         display: "flex",
-        gap: "12px",
-        marginBottom: "16px"
+        alignItems: 'center',
+        gap: "1rem",
+        marginBottom: "12px",
+        padding: '0.5rem',
+        background: 'var(--bg-secondary)',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        transition: 'box-shadow 0.3s ease',
     },
     searchBox: {
         flex: 1,
-        position: "relative"
+        position: "relative",
+        display: "flex",
+        alignItems: "center"
     },
     searchIcon: {
         position: "absolute",
@@ -1645,7 +1651,8 @@ const styles: Record<string, React.CSSProperties> = {
         background: "var(--input-bg)",
         color: "var(--text-primary)",
         fontSize: "14px",
-        outline: "none"
+        outline: "none",
+        transition: "border-color 0.2s",
     },
     filterButton: {
         padding: "12px 20px",
