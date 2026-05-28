@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Input from "../components/Form/Input";
 import Section from "../components/Form/Section";
-import { supabase } from "../lib/supabase";
+import supabase from "../lib/supabase";
 
 interface AulaFormData {
     Professor_ID: string;

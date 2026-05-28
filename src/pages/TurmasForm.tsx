@@ -5,7 +5,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import Input from "../components/Form/Input";
 import Section from "../components/Form/Section";
 import Select from "../components/Form/Select";
-import { supabase } from "../lib/supabase";
+import supabase from "../lib/supabase";
 
 interface TurmaFormData {
     Nome: string;

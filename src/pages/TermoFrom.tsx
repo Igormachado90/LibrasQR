@@ -378,34 +378,32 @@
 //   );
 // }
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import {
-    FaFileAlt,
     FaSave,
     FaPaperPlane,
     FaArrowLeft,
-    FaTag,
-    FaList,
-    FaBook,
     FaExclamationTriangle,
-    FaCheckCircle,
-    FaTimesCircle
+    FaTimesCircle,
+    FaBook,
+    FaTag
 } from "react-icons/fa";
 
-interface NovoTermo {
+interface TermoFormData {
     titulo: string;
     definicao: string;
     categoria: string;
     palavrasChave: string[];
-    status: "rascunho" | "analise";
+    status: "rascunho" | "pendente" | "aprovado" | "recusado";
     autor: {
         id: string;
         nome: string;
         tipo: string;
     };
     dataCriacao: string;
+    versao: string;
 }
 
 interface ErroValidacao {
@@ -413,10 +411,19 @@ interface ErroValidacao {
     mensagem: string;
 }
 
-export default function CadastrarTermo() {
+export default function TermoForm() {
     const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>();
+    const isEditing = !!id;
+
     const [loading, setLoading] = useState(false);
-    const [termo, setTermo] = useState<NovoTermo>({
+    const [fetching, setFetching] = useState(isEditing);
+    const [showConfirmacao, setShowConfirmacao] = useState(false);
+    const [acaoConfirmacao, setAcaoConfirmacao] = useState<"rascunho" | "analise" | null>(null);
+    const [palavraChaveInput, setPalavraChaveInput] = useState("");
+    const [erros, setErros] = useState<ErroValidacao[]>([]);
+
+    const [termo, setTermo] = useState<TermoFormData>({
         titulo: "",
         definicao: "",
         categoria: "",
@@ -427,23 +434,57 @@ export default function CadastrarTermo() {
             nome: "Admin Sistema",
             tipo: "admin"
         },
-        dataCriacao: new Date().toISOString()
+        dataCriacao: new Date().toISOString(),
+        versao: "1.0"
     });
-    const [palavraChaveInput, setPalavraChaveInput] = useState("");
-    const [erros, setErros] = useState<ErroValidacao[]>([]);
-    const [showConfirmacao, setShowConfirmacao] = useState(false);
-    const [acaoConfirmacao, setAcaoConfirmacao] = useState<"rascunho" | "analise" | null>(null);
 
     const categorias = [
-        "Consentimento",
-        "Responsabilidade",
-        "Confidencialidade",
-        "Adesão",
-        "Compromisso",
-        "Autorização",
-        "Declaração",
-        "Outros"
+        "Algoritmos",
+        "Estruturas de Controle",
+        "Estruturas de Dados",
+        "Programação Orientada a Objetos",
+        "Banco de Dados",
+        "Funções",
+        "Conceitos Básicos",
+        "Linguagens de Programação"
     ];
+
+    // Carregar dados se for edição
+    useEffect(() => {
+        if (isEditing) {
+            fetchTermo();
+        }
+    }, [id]);
+
+    const fetchTermo = async () => {
+        setFetching(true);
+        try {
+            // Simular busca de dados
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Dados mockados para edição
+            const mockData = {
+                titulo: "Algoritmos de Ordenação - Quick Sort",
+                definicao: "Implementação e análise do algoritmo de ordenação Quick Sort em diferentes linguagens. O Quick Sort é um algoritmo eficiente de ordenação que utiliza a estratégia de dividir para conquistar.",
+                categoria: "Algoritmos",
+                palavrasChave: ["quick sort", "ordenação", "algoritmos", "complexidade"],
+                status: "rascunho" as const,
+                autor: {
+                    id: "1",
+                    nome: "Admin Sistema",
+                    tipo: "admin"
+                },
+                dataCriacao: "2024-03-01T10:30:00",
+                versao: "2.1"
+            };
+
+            setTermo(mockData);
+        } catch (error) {
+            console.error("Erro ao carregar termo:", error);
+        } finally {
+            setFetching(false);
+        }
+    };
 
     const validarCampos = (acao: "rascunho" | "analise"): boolean => {
         const novosErros: ErroValidacao[] = [];
@@ -495,16 +536,9 @@ export default function CadastrarTermo() {
         return novosErros.length === 0;
     };
 
-    const handleSalvarRascunho = () => {
-        if (validarCampos("rascunho")) {
-            setAcaoConfirmacao("rascunho");
-            setShowConfirmacao(true);
-        }
-    };
-
-    const handleEnviarAnalise = () => {
-        if (validarCampos("analise")) {
-            setAcaoConfirmacao("analise");
+    const handleSalvar = (tipo: "rascunho" | "analise") => {
+        if (validarCampos(tipo)) {
+            setAcaoConfirmacao(tipo);
             setShowConfirmacao(true);
         }
     };
@@ -522,28 +556,22 @@ export default function CadastrarTermo() {
             const termoParaSalvar = {
                 ...termo,
                 status: acaoConfirmacao === "rascunho" ? "rascunho" : "pendente",
-                id: Date.now().toString(),
-                versao: "1.0"
+                id: isEditing ? id : Date.now().toString(),
+                versao: isEditing ? termo.versao : "1.0",
+                dataCriacao: isEditing ? termo.dataCriacao : new Date().toISOString()
             };
 
             console.log("Termo salvo:", termoParaSalvar);
 
             // Redirecionar baseado na ação
-            if (acaoConfirmacao === "rascunho") {
-                navigate("/termos/gerenciar", { 
-                    state: { 
-                        mensagem: "Termo salvo como rascunho com sucesso!",
-                        tipo: "sucesso" 
-                    }
-                });
-            } else {
-                navigate("/termos/gerenciar", { 
-                    state: { 
-                        mensagem: "Termo enviado para análise com sucesso!",
-                        tipo: "sucesso" 
-                    }
-                });
-            }
+            navigate("/termos", { 
+                state: { 
+                    mensagem: acaoConfirmacao === "rascunho" 
+                        ? "Termo salvo como rascunho com sucesso!" 
+                        : "Termo enviado para análise com sucesso!",
+                    tipo: "sucesso" 
+                }
+            });
         } catch (error) {
             console.error("Erro ao salvar termo:", error);
             setErros([
@@ -563,8 +591,6 @@ export default function CadastrarTermo() {
                     palavrasChave: [...termo.palavrasChave, palavraChaveInput.trim()]
                 });
                 setPalavraChaveInput("");
-            } else {
-                alert("Máximo de 10 palavras-chave permitidas");
             }
         }
     };
@@ -587,6 +613,17 @@ export default function CadastrarTermo() {
         return erros.find(e => e.campo === campo)?.mensagem;
     };
 
+    if (fetching) {
+        return (
+            <DashboardLayout>
+                <div style={styles.loadingContainer}>
+                    <div style={styles.spinner}></div>
+                    <p>Carregando termo...</p>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     return (
         <DashboardLayout>
             <div style={styles.container}>
@@ -598,21 +635,23 @@ export default function CadastrarTermo() {
                     >
                         <FaArrowLeft /> Voltar
                     </button>
-                    <h1 style={styles.title}>Cadastrar Novo Termo</h1>
+                    <h1 style={styles.title}>
+                        {isEditing ? "Editar Termo" : "Cadastrar Novo Termo"}
+                    </h1>
                     <div style={styles.headerActions}>
                         <button
-                            onClick={handleSalvarRascunho}
+                            onClick={() => handleSalvar("rascunho")}
                             style={styles.draftButton}
                             disabled={loading}
                         >
                             <FaSave /> Salvar como Rascunho
                         </button>
                         <button
-                            onClick={handleEnviarAnalise}
+                            onClick={() => handleSalvar("analise")}
                             style={styles.submitButton}
                             disabled={loading}
                         >
-                            <FaPaperPlane /> Enviar para Análise
+                            <FaPaperPlane /> {isEditing ? "Enviar para Análise" : "Enviar para Análise"}
                         </button>
                     </div>
                 </div>
@@ -635,7 +674,7 @@ export default function CadastrarTermo() {
                             type="text"
                             value={termo.titulo}
                             onChange={(e) => setTermo({ ...termo, titulo: e.target.value })}
-                            placeholder="Ex: Termo de Consentimento para Coleta de Dados"
+                            placeholder="Ex: Algoritmos de Ordenação - Quick Sort"
                             style={{
                                 ...styles.input,
                                 borderColor: getErroCampo("titulo") ? "var(--danger)" : "var(--border-color)"
@@ -721,7 +760,7 @@ export default function CadastrarTermo() {
                                 Adicionar
                             </button>
                         </div>
-                        
+
                         {getErroCampo("palavrasChave") && (
                             <span style={styles.erroText}>{getErroCampo("palavrasChave")}</span>
                         )}
@@ -729,6 +768,7 @@ export default function CadastrarTermo() {
                         <div style={styles.keywordsList}>
                             {termo.palavrasChave.map((palavra, index) => (
                                 <span key={index} style={styles.keywordTag}>
+                                    <FaTag size={10} />
                                     {palavra}
                                     <button
                                         onClick={() => removerPalavraChave(palavra)}
@@ -749,6 +789,36 @@ export default function CadastrarTermo() {
                         </span>
                     </div>
 
+                    {/* Informações de versão (apenas para edição) */}
+                    {isEditing && (
+                        <div style={styles.versionInfo}>
+                            <div style={styles.versionItem}>
+                                <strong>Versão atual:</strong> v{termo.versao}
+                            </div>
+                            <div style={styles.versionItem}>
+                                <strong>Data de criação:</strong> {new Date(termo.dataCriacao).toLocaleString()}
+                            </div>
+                            <div style={styles.versionItem}>
+                                <strong>Status atual:</strong> 
+                                <span style={{
+                                    marginLeft: "8px",
+                                    padding: "4px 8px",
+                                    borderRadius: "4px",
+                                    background: termo.status === "aprovado" ? "var(--success-light)" :
+                                               termo.status === "pendente" ? "var(--warning-light)" :
+                                               termo.status === "recusado" ? "var(--danger-light)" :
+                                               "var(--info-light)",
+                                    color: termo.status === "aprovado" ? "var(--success)" :
+                                           termo.status === "pendente" ? "var(--warning)" :
+                                           termo.status === "recusado" ? "var(--danger)" :
+                                           "var(--info)"
+                                }}>
+                                    {termo.status}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Informações adicionais */}
                     <div style={styles.infoBox}>
                         <FaBook style={{ color: "var(--primary)", fontSize: "20px" }} />
@@ -756,8 +826,8 @@ export default function CadastrarTermo() {
                             <h4 style={styles.infoTitle}>Dicas para um bom termo:</h4>
                             <ul style={styles.infoList}>
                                 <li>Use linguagem clara e acessível</li>
-                                <li>Seja específico sobre direitos e responsabilidades</li>
-                                <li>Inclua todas as informações relevantes</li>
+                                <li>Seja específico sobre o conceito técnico</li>
+                                <li>Inclua exemplos de uso quando possível</li>
                                 <li>Adicione palavras-chave que facilitem a busca</li>
                                 <li>Revise o conteúdo antes de enviar para análise</li>
                             </ul>
@@ -776,15 +846,15 @@ export default function CadastrarTermo() {
                                     <FaPaperPlane style={{ color: "var(--primary)", fontSize: "48px" }} />
                                 )}
                             </div>
-                            
+
                             <h3 style={styles.modalTitle}>
-                                {acaoConfirmacao === "rascunho" 
-                                    ? "Salvar como Rascunho?" 
+                                {acaoConfirmacao === "rascunho"
+                                    ? "Salvar como Rascunho?"
                                     : "Enviar para Análise?"}
                             </h3>
-                            
+
                             <p style={styles.modalText}>
-                                {acaoConfirmacao === "rascunho" 
+                                {acaoConfirmacao === "rascunho"
                                     ? "O termo será salvo como rascunho e você poderá editá-lo posteriormente antes de enviar para análise."
                                     : "O termo será enviado para análise da equipe responsável. Você receberá uma notificação quando for aprovado ou se houver necessidade de ajustes."}
                             </p>
@@ -801,8 +871,8 @@ export default function CadastrarTermo() {
                                     onClick={confirmarAcao}
                                     style={{
                                         ...styles.modalConfirmButton,
-                                        background: acaoConfirmacao === "rascunho" 
-                                            ? "var(--warning)" 
+                                        background: acaoConfirmacao === "rascunho"
+                                            ? "var(--warning)"
                                             : "var(--primary)"
                                     }}
                                     disabled={loading}
@@ -841,28 +911,45 @@ export default function CadastrarTermo() {
 // Estilos
 const styles: Record<string, React.CSSProperties> = {
     container: {
-        animation: "fadeIn 0.5s ease-out"
+        animation: "fadeIn 0.5s ease-out",
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "20px"
+    },
+    loadingContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "60vh"
+    },
+    spinner: {
+        width: "50px",
+        height: "50px",
+        border: "3px solid var(--border-color)",
+        borderTopColor: "var(--primary)",
+        borderRadius: "50%",
+        animation: "spin 1s linear infinite",
+        marginBottom: "16px"
     },
     header: {
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: "32px",
-        flexWrap: "wrap",
-        gap: "16px"
+        gap: "16px",
+        marginBottom: "24px",
+        flexWrap: "wrap"
     },
     backButton: {
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-        padding: "8px 16px",
-        background: "transparent",
-        border: "1px solid var(--border-color)",
+        padding: "10px 16px",
         borderRadius: "8px",
-        color: "var(--text-secondary)",
+        border: "1px solid var(--border-color)",
+        background: "transparent",
+        color: "var(--text-primary)",
         fontSize: "14px",
         cursor: "pointer",
-        transition: "all 0.2s"
+        display: "flex",
+        alignItems: "center",
+        gap: "8px"
     },
     title: {
         margin: 0,
@@ -876,40 +963,36 @@ const styles: Record<string, React.CSSProperties> = {
         gap: "12px"
     },
     draftButton: {
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
         padding: "10px 20px",
-        background: "transparent",
-        border: "1px solid var(--warning)",
         borderRadius: "8px",
+        border: "1px solid var(--warning)",
+        background: "transparent",
         color: "var(--warning)",
         fontSize: "14px",
         fontWeight: "500",
         cursor: "pointer",
-        transition: "all 0.2s"
-    },
-    submitButton: {
         display: "flex",
         alignItems: "center",
-        gap: "8px",
+        gap: "8px"
+    },
+    submitButton: {
         padding: "10px 20px",
-        background: "var(--primary)",
-        border: "none",
         borderRadius: "8px",
+        border: "none",
+        background: "var(--primary)",
         color: "#fff",
         fontSize: "14px",
         fontWeight: "500",
         cursor: "pointer",
-        transition: "all 0.2s"
+        display: "flex",
+        alignItems: "center",
+        gap: "8px"
     },
     formContainer: {
         background: "var(--card-bg)",
-        borderRadius: "12px",
+        borderRadius: "16px",
         border: "1px solid var(--border-color)",
-        padding: "24px",
-        maxWidth: "800px",
-        margin: "0 auto"
+        padding: "32px"
     },
     erroGeral: {
         display: "flex",
@@ -966,8 +1049,7 @@ const styles: Record<string, React.CSSProperties> = {
         background: "var(--input-bg)",
         color: "var(--text-primary)",
         fontSize: "14px",
-        outline: "none",
-        cursor: "pointer"
+        outline: "none"
     },
     erroText: {
         display: "block",
@@ -1015,7 +1097,7 @@ const styles: Record<string, React.CSSProperties> = {
     keywordTag: {
         display: "inline-flex",
         alignItems: "center",
-        gap: "4px",
+        gap: "6px",
         padding: "4px 8px",
         background: "var(--primary-soft)",
         color: "var(--primary)",
@@ -1035,6 +1117,21 @@ const styles: Record<string, React.CSSProperties> = {
         color: "var(--text-tertiary)",
         fontSize: "13px",
         fontStyle: "italic"
+    },
+    versionInfo: {
+        padding: "16px",
+        background: "var(--bg-tertiary)",
+        borderRadius: "8px",
+        marginBottom: "20px",
+        display: "flex",
+        gap: "20px",
+        flexWrap: "wrap"
+    },
+    versionItem: {
+        fontSize: "13px",
+        color: "var(--text-secondary)",
+        display: "flex",
+        alignItems: "center"
     },
     infoBox: {
         display: "flex",
@@ -1074,7 +1171,7 @@ const styles: Record<string, React.CSSProperties> = {
     },
     modal: {
         background: "var(--card-bg)",
-        borderRadius: "12px",
+        borderRadius: "16px",
         padding: "32px",
         maxWidth: "400px",
         width: "90%",
@@ -1101,27 +1198,27 @@ const styles: Record<string, React.CSSProperties> = {
         justifyContent: "center"
     },
     modalCancelButton: {
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
         padding: "10px 20px",
-        background: "transparent",
-        border: "1px solid var(--border-color)",
         borderRadius: "8px",
+        border: "1px solid var(--border-color)",
+        background: "transparent",
         color: "var(--text-secondary)",
         fontSize: "14px",
-        cursor: "pointer"
-    },
-    modalConfirmButton: {
+        cursor: "pointer",
         display: "flex",
         alignItems: "center",
-        gap: "8px",
+        gap: "8px"
+    },
+    modalConfirmButton: {
         padding: "10px 20px",
-        border: "none",
         borderRadius: "8px",
+        border: "none",
         color: "#fff",
         fontSize: "14px",
-        cursor: "pointer"
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        gap: "8px"
     },
     loadingOverlay: {
         position: "fixed",
@@ -1135,13 +1232,31 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: "center",
         justifyContent: "center",
         zIndex: 3000
-    },
-    spinner: {
-        width: "50px",
-        height: "50px",
-        border: "3px solid rgba(255,255,255,0.3)",
-        borderTopColor: "#fff",
-        borderRadius: "50%",
-        animation: "spin 1s linear infinite"
     }
 };
+
+// Adicionar keyframes para animações
+const globalStyles = `
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+`;
+
+const style = document.createElement('style');
+style.textContent = globalStyles;
+document.head.appendChild(style);

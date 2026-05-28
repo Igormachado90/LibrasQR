@@ -5,7 +5,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import Section from "../components/Form/Section";
 import Select from "../components/Form/Select";
 import Input from "../components/Form/Input";
-import { supabase } from "../lib/supabase";
+import supabase from "../lib/supabase";
 
 interface DisponibilidadeFormData {
     Professor_ID: string;

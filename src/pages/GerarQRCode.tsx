@@ -2263,9 +2263,9 @@ export default function GerarQRCode() {
         </html>
     `);
 
-        
-            printWindow.document.close();
-        
+
+        printWindow.document.close();
+
     };
 
     // const handleVoltar = () => {
@@ -2450,6 +2450,7 @@ export default function GerarQRCode() {
                                         value={qrSize}
                                         onChange={(e) => setQrSize(Number(e.target.value))}
                                         style={styles.sizeSlider}
+                                        className="theme-slider"
                                     />
                                     <div style={styles.sizeMarkers}>
                                         <span>128px</span>
@@ -2879,18 +2880,23 @@ const styles: Record<string, React.CSSProperties> = {
     optionsList: {
         display: "flex",
         flexDirection: "column",
-        gap: "24px",
+        // gap: "24px",
         marginBottom: "24px"
     },
     optionGroup: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px"
+        marginBottom: "10px",
+        padding: "16px",
+        background: "var(--bg-secondary)",
+        borderRadius: "8px",
+        border: "1px solid var(--border-color)",
+        transition: "all 0.3s ease"
     },
     optionLabel: {
-        fontSize: "13px",
-        fontWeight: "500",
-        color: "var(--text-secondary)"
+        display: "block",
+        marginBottom: "12px",
+        color: "var(--text-primary)",
+        fontSize: "14px",
+        fontWeight: "500"
     },
     formatButtons: {
         display: "grid",
@@ -2912,14 +2918,23 @@ const styles: Record<string, React.CSSProperties> = {
         borderRadius: "3px",
         background: "var(--border-color)",
         outline: "none",
-        cursor: "pointer"
+        cursor: "pointer",
+        WebkitAppearance: "none",
+        appearance: "none"
     },
     sizeMarkers: {
         display: "flex",
         justifyContent: "space-between",
-        fontSize: "11px",
-        color: "var(--text-tertiary)",
+        // fontSize: "11px",
+        // color: "var(--text-tertiary)",
+        // padding: "0 4px"
+        marginTop: "8px",
         padding: "0 4px"
+    },
+    markerText: {
+        color: "var(--text-tertiary)",
+        fontSize: "11px",
+        transition: "color 0.3s ease"
     },
     errorCorrectionButtons: {
         display: "grid",

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { supabase } from "../lib/supabase";
+import supabase from "../lib/supabase";
 
 interface Usuario {
     nome: string;

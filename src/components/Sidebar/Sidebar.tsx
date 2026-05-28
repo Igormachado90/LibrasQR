@@ -370,10 +370,12 @@ import {
   FaChevronRight,
   FaChevronLeft,
   FaFileAlt,
-  FaBookOpen
+  FaBookOpen,
+  FaAd
 } from 'react-icons/fa';
 import { IoQrCode } from "react-icons/io5";
-import { FaGraduationCap } from "react-icons/fa6";
+import { FaGraduationCap, FaSchool } from "react-icons/fa6";
+import { BsTranslate } from "react-icons/bs";
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -382,19 +384,21 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const navigate = useNavigate();
-  const { theme } = useTheme(); 
+  const { theme } = useTheme();
 
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", icon: <FaHome /> },
-    { name: "Termos de Uso", path: "/termos", icon: <FaFileAlt /> },
+    { name: "Neologismos", path: "/neologismos", icon: <BsTranslate /> },
+    { name: "Termos Técnicos", path: "/termos", icon: <FaAd /> },
     { name: "Aprovar/Recusar Termos", path: "/aprovarRecusar", icon: <FaFileAlt /> },
     { name: "Gerar QR Code", path: "/gerar-qr", icon: <IoQrCode /> },
     { name: "Cursos", path: "/curso", icon: <FaGraduationCap /> },
+    { name: "Gestão de Escolas", path: "/escolas", icon: <FaSchool /> },
+    { name: "Gestão de Disciplinas", path: "/disciplinas", icon: <FaBook /> }, 
     // { name: "Scanner", path: "/scanner", icon: <FaCamera /> },
     // { name: "Biblioteca", path: "/biblioteca", icon: <FaVideo /> },
     // { name: "Meus QR Codes", path: "/meus-qrcodes", icon: <FaBook /> },
     // { name: "Favoritos", path: "/favoritos", icon: <FaStar /> },
-    { name: "Histórico", path: "/historico", icon: <FaHistory /> },
     { name: "Materiais Didaticos", path: "/materiais-didaticos", icon: <FaBookOpen /> },
     { name: "Usuários", path: "/usuarios", icon: <FaUsers />, admin: true },
     { name: "Categorias", path: "/categorias", icon: <FaBook /> },
@@ -424,8 +428,8 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         zIndex: 1000,
         transition: "width 0.3s ease, background-color 0.3s ease",
         overflow: "hidden",
-        boxShadow: collapsed 
-          ? "2px 0 8px rgba(0,0,0,0.05)" 
+        boxShadow: collapsed
+          ? "2px 0 8px rgba(0,0,0,0.05)"
           : "4px 0 12px rgba(0,0,0,0.08)"
       }}
     >
@@ -443,8 +447,8 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
           <img
             src={theme === "dark" ? "/logoQR.png" : "/logoQR-dark.png"}
             alt="LibrasQR"
-            style={{ 
-              width: "40px", 
+            style={{
+              width: "40px",
               height: "51px",
               marginBottom: "5px"
             }}
@@ -454,8 +458,8 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
             <img
               src={theme === "dark" ? "/logoLibrasQR.png" : "/logoLibrasQR-dark.png"}
               alt="LibrasQR"
-              style={{ 
-                width: "140px", 
+              style={{
+                width: "140px",
                 height: "auto",
                 marginBottom: "5px"
               }}
@@ -520,19 +524,18 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         scrollbarWidth: "thin",
         scrollbarColor: "var(--scrollbar-thumb) var(--scrollbar-track)"
       }}>
-        <ul style={{ 
-          listStyle: "none", 
-          padding: 0, 
+        <ul style={{
+          listStyle: "none",
+          padding: 0,
           margin: "0px 5px",
           display: "flex",
           flexDirection: "column",
           gap: "2px"
         }}>
           {menuItems.map((item) => (
-            <li key={item.name}>
+            <li key={item.name} style={{ position: "relative" }}>
               <NavLink
                 to={item.path}
-                className={({ isActive }) => isActive ? "active" : ""}
                 style={({ isActive }) => ({
                   display: "flex",
                   alignItems: "center",
@@ -555,10 +558,22 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                   if (!e.currentTarget.classList.contains("active")) {
                     e.currentTarget.style.backgroundColor = "var(--bg-hover)";
                   }
+                  // Mostrar tooltip
+                  const tooltip = e.currentTarget.parentElement?.querySelector('.tooltip');
+                  if (tooltip) {
+                    (tooltip as HTMLElement).style.opacity = '1';
+                    (tooltip as HTMLElement).style.visibility = 'visible';
+                  }
                 }}
                 onMouseLeave={(e) => {
                   if (!e.currentTarget.classList.contains("active")) {
                     e.currentTarget.style.backgroundColor = "transparent";
+                  }
+                  // Esconder tooltip
+                  const tooltip = e.currentTarget.parentElement?.querySelector('.tooltip');
+                  if (tooltip) {
+                    (tooltip as HTMLElement).style.opacity = '0';
+                    (tooltip as HTMLElement).style.visibility = 'hidden';
                   }
                 }}
               >
@@ -571,15 +586,49 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                 }}>
                   {item.icon}
                 </span>
-                
+
                 {!collapsed && item.name}
-                
+
                 {/* Tooltip para modo colapsado */}
+
                 {collapsed && (
-                  <div className="tooltip">
+                  <span
+                    className="tooltip"
+                    style={{
+                      position: "absolute",
+                      left: "100%",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      marginLeft: "8px",
+                      padding: "4px 8px",
+                      background: "var(--bg-secondary)",
+                      color: "var(--text-primary)",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      borderRadius: "4px",
+                      boxShadow: "var(--card-shadow)",
+                      border: "1px solid var(--border-color)",
+                      whiteSpace: "nowrap",
+                      zIndex: 1000,
+                      opacity: 0,
+                      visibility: "hidden",
+                      transition: "all 0.2s ease",
+                      pointerEvents: "none"
+                    }}
+                  >
                     {item.name}
-                    <span className="tooltip-arrow"></span>
-                  </div>
+                    <span style={{
+                      position: "absolute",
+                      right: "100%",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      width: 0,
+                      height: 0,
+                      borderTop: "6px solid transparent",
+                      borderBottom: "6px solid transparent",
+                      borderRight: "6px solid var(--bg-secondary)"
+                    }} />
+                  </span>
                 )}
 
                 {/* Badge de admin (opcional) */}
@@ -727,6 +776,6 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
           }
         `}
       </style>
-    </aside>
+    </aside >
   );
 }

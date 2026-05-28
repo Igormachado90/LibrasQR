@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+import supabase from "../../lib/supabase";
 import Pagination from "../Table/Pagination";
 import { toast } from "react-hot-toast";
 

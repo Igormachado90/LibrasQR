@@ -42,8 +42,8 @@
 
 /* Tema Escuro */
 :root.dark {
-    --bg-primary: #111827;
-    --bg-secondary: #1f2937;
+    --bg-primary: #1b1c1e;
+    --bg-secondary: #131416;
     --bg-tertiary: #374151;
     --bg-hover: #374151;
 
@@ -55,7 +55,7 @@
     --border-color: #374151;
     --border-light: #4b5563;
 
-    --card-bg: #1f2937;
+    --card-bg: #282b2d;
     --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     --card-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.4);
 
@@ -66,7 +66,7 @@
     --primary: #3b82f6;
     --primary-dark: #2563eb;
     --primary-light: #1e3a8a;
-    --primary-soft: #3b82f620;
+    --primary-soft: #292b2e;
 
     --success: #34d399;
     --success-light: #064e3b;

@@ -155,13 +155,14 @@ export default function AprovarRecusarTermos() {
     const itemsPerPage = 5;
 
     const categorias = [
-        "Consentimento",
-        "Responsabilidade",
-        "Confidencialidade",
-        "Adesão",
-        "Compromisso",
-        "Autorização",
-        "Declaração"
+        "Conceitos Básicos",
+        "Estruturas de Controle",
+        "Estruturas de Dados",
+        "Programação Orientada a Objetos",
+        "Algoritmos",
+        "Banco de Dados",
+        "Funções",
+        "Linguagens de Programação"
     ];
 
     const prioridades = {
@@ -182,154 +183,207 @@ export default function AprovarRecusarTermos() {
 
             // Dados mockados - Termos Pendentes
             const mockPendentes: TermoPendente[] = [
-                {
-                    id: "1",
-                    titulo: "Termo de Responsabilidade - Uso de Equipamentos",
-                    descricao: "Termo para responsabilidade sobre uso de equipamentos da instituição",
-                    categoria: "Responsabilidade",
-                    versao: "1.0",
-                    autor: {
-                        id: "2",
-                        nome: "João Silva",
-                        tipo: "gestor"
-                    },
-                    dataEnvio: "2024-02-20T10:30:00",
-                    dataLimite: "2024-02-27",
-                    prioridade: "alta",
-                    comentarios: [
-                        {
-                            id: "c1",
-                            autor: "Revisor",
-                            texto: "Favor revisar cláusula 3 sobre responsabilidades",
-                            data: "2024-02-21T09:15:00",
-                            tipo: "revisor"
-                        }
-                    ],
-                    anexos: 2,
-                    tags: ["equipamentos", "responsabilidade"],
-                    status: "pendente",
-                    conteudo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-                    videoExplicativo: "https://www.youtube.com/watch?v=example",
-                    definicoes: [
-                        { termo: "Equipamento", definicao: "Qualquer dispositivo eletrônico fornecido pela instituição" },
-                        { termo: "Responsabilidade", definicao: "Obrigação de responder pelos atos praticados" }
-                    ]
-                },
-                {
+            {
+                id: "1",
+                titulo: "Algoritmo de Ordenação Merge Sort",
+                descricao: "Implementação detalhada do Merge Sort com análise de complexidade e exemplos práticos",
+                categoria: "Algoritmos",
+                versao: "1.0",
+                autor: {
                     id: "2",
-                    titulo: "Termo de Compromisso - Estágio",
-                    descricao: "Termo de compromisso para estágio curricular obrigatório",
-                    categoria: "Compromisso",
-                    versao: "1.5",
-                    autor: {
-                        id: "3",
-                        nome: "Maria Oliveira",
-                        tipo: "profissional"
-                    },
-                    dataEnvio: "2024-02-19T14:20:00",
-                    dataLimite: "2024-02-26",
-                    prioridade: "media",
-                    comentarios: [],
-                    anexos: 1,
-                    tags: ["estágio", "compromisso"],
-                    status: "pendente"
+                    nome: "João Silva",
+                    tipo: "instrutor"
                 },
-                {
+                dataEnvio: "2024-02-20T10:30:00",
+                dataLimite: "2024-02-27",
+                prioridade: "alta",
+                comentarios: [
+                    {
+                        id: "c1",
+                        autor: "Revisor Técnico",
+                        texto: "Favor adicionar exemplos de implementação em Python e JavaScript",
+                        data: "2024-02-21T09:15:00",
+                        tipo: "revisor"
+                    }
+                ],
+                anexos: 2,
+                tags: ["merge sort", "ordenação", "algoritmos", "complexidade O(n log n)"],
+                status: "pendente",
+                conteudo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+                videoExplicativo: "https://www.youtube.com/watch?v=merge-sort",
+                definicoes: [
+                    { termo: "Merge Sort", definicao: "Algoritmo de ordenação baseado na técnica de divisão e conquista" },
+                    { termo: "Complexidade", definicao: "Medida de eficiência do algoritmo em relação ao tempo e memória" }
+                ]
+            },
+            {
+                id: "2",
+                titulo: "Estruturas de Repetição: While vs For",
+                descricao: "Comparativo detalhado entre estruturas de repetição com exemplos em diferentes linguagens",
+                categoria: "Estruturas de Controle",
+                versao: "1.5",
+                autor: {
                     id: "3",
-                    titulo: "Termo de Consentimento - Pesquisa Acadêmica",
-                    descricao: "Termo para consentimento de participação em pesquisa",
-                    categoria: "Consentimento",
-                    versao: "2.1",
-                    autor: {
-                        id: "4",
-                        nome: "Pedro Costa",
-                        tipo: "profissional"
-                    },
-                    dataEnvio: "2024-02-18T09:45:00",
-                    dataLimite: "2024-02-25",
-                    prioridade: "urgente",
-                    comentarios: [
-                        {
-                            id: "c2",
-                            autor: "Autor",
-                            texto: "Documento revisado conforme solicitado",
-                            data: "2024-02-19T11:30:00",
-                            tipo: "autor"
-                        },
-                        {
-                            id: "c3",
-                            autor: "Revisor",
-                            texto: "Aguardando aprovação final",
-                            data: "2024-02-20T08:15:00",
-                            tipo: "revisor"
-                        }
-                    ],
-                    anexos: 3,
-                    tags: ["pesquisa", "consentimento"],
-                    status: "pendente"
+                    nome: "Maria Oliveira",
+                    tipo: "instrutora"
                 },
-                {
+                dataEnvio: "2024-02-19T14:20:00",
+                dataLimite: "2024-02-26",
+                prioridade: "media",
+                comentarios: [],
+                anexos: 1,
+                tags: ["loops", "while", "for", "repetição", "iteração"],
+                status: "pendente"
+            },
+            {
+                id: "3",
+                titulo: "Programação Orientada a Objetos em Python",
+                descricao: "Guia completo sobre classes, objetos, herança e polimorfismo em Python",
+                categoria: "Programação Orientada a Objetos",
+                versao: "2.1",
+                autor: {
                     id: "4",
-                    titulo: "Termo de Confidencialidade - Dados Sensíveis",
-                    descricao: "Termo para garantia de sigilo de informações confidenciais",
-                    categoria: "Confidencialidade",
-                    versao: "3.0",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
+                    nome: "Pedro Costa",
+                    tipo: "instrutor"
+                },
+                dataEnvio: "2024-02-18T09:45:00",
+                dataLimite: "2024-02-25",
+                prioridade: "urgente",
+                comentarios: [
+                    {
+                        id: "c2",
+                        autor: "Autor",
+                        texto: "Material revisado com exemplos práticos adicionados",
+                        data: "2024-02-19T11:30:00",
+                        tipo: "autor"
                     },
-                    dataEnvio: "2024-02-17T16:10:00",
-                    prioridade: "baixa",
-                    comentarios: [],
-                    anexos: 0,
-                    tags: ["confidencialidade", "dados"],
-                    status: "pendente"
-                }
-            ];
+                    {
+                        id: "c3",
+                        autor: "Revisor Técnico",
+                        texto: "Aguardando aprovação da coordenação pedagógica",
+                        data: "2024-02-20T08:15:00",
+                        tipo: "revisor"
+                    }
+                ],
+                anexos: 3,
+                tags: ["python", "poo", "classes", "herança", "polimorfismo"],
+                status: "pendente"
+            },
+            {
+                id: "4",
+                titulo: "Consultas SQL Avançadas",
+                descricao: "Tutorial sobre subqueries, joins complexos e otimização de consultas",
+                categoria: "Banco de Dados",
+                versao: "3.0",
+                autor: {
+                    id: "1",
+                    nome: "Admin Sistema",
+                    tipo: "admin"
+                },
+                dataEnvio: "2024-02-17T16:10:00",
+                prioridade: "baixa",
+                comentarios: [],
+                anexos: 0,
+                tags: ["sql", "banco de dados", "joins", "subqueries", "otimização"],
+                status: "pendente"
+            },
+            {
+                id: "5",
+                titulo: "Funções Recursivas e Call Stack",
+                descricao: "Explicação detalhada sobre recursividade, pilha de chamadas e casos de uso",
+                categoria: "Funções",
+                versao: "2.2",
+                autor: {
+                    id: "5",
+                    nome: "Ana Santos",
+                    tipo: "instrutora"
+                },
+                dataEnvio: "2024-02-16T11:30:00",
+                dataLimite: "2024-02-23",
+                prioridade: "media",
+                comentarios: [
+                    {
+                        id: "c4",
+                        autor: "Revisor Técnico",
+                        texto: "Excelente material! Sugiro adicionar exemplos de recursão em cauda",
+                        data: "2024-02-17T14:20:00",
+                        tipo: "revisor"
+                    }
+                ],
+                anexos: 2,
+                tags: ["recursividade", "call stack", "funções", "algoritmos"],
+                status: "pendente"
+            }
+        ];
 
-            // Dados mockados - Histórico
-            const mockHistorico: HistoricoAprovacao[] = [
-                {
-                    id: "h1",
-                    termoId: "101",
-                    termoTitulo: "Termo de Autorização - Uso de Imagem",
-                    acao: "aprovado",
-                    revisor: {
-                        id: "1",
-                        nome: "Admin Sistema"
-                    },
-                    data: "2024-02-19T15:30:00",
-                    justificativa: "Documento atende todos os requisitos legais",
-                    versao: "2.0"
+        // Dados mockados - Histórico de Aprovações
+        const mockHistorico: HistoricoAprovacao[] = [
+            {
+                id: "h1",
+                termoId: "101",
+                termoTitulo: "Manipulação de Arrays em JavaScript",
+                acao: "aprovado",
+                revisor: {
+                    id: "1",
+                    nome: "Admin Sistema"
                 },
-                {
-                    id: "h2",
-                    termoId: "102",
-                    termoTitulo: "Termo de Responsabilidade - Eventos",
-                    acao: "recusado",
-                    revisor: {
-                        id: "5",
-                        nome: "Carlos Santos"
-                    },
-                    data: "2024-02-18T11:20:00",
-                    justificativa: "Cláusulas 4 e 7 precisam ser revisadas conforme legislação vigente",
-                    versao: "1.0"
+                data: "2024-02-19T15:30:00",
+                justificativa: "Material completo, exemplos claros e didática excelente",
+                versao: "2.0"
+            },
+            {
+                id: "h2",
+                termoId: "102",
+                termoTitulo: "TypeScript: Tipagem Avançada",
+                acao: "recusado",
+                revisor: {
+                    id: "5",
+                    nome: "Carlos Santos"
                 },
-                {
-                    id: "h3",
-                    termoId: "103",
-                    termoTitulo: "Termo de Adesão - Programa de Benefícios",
-                    acao: "revisao",
-                    revisor: {
-                        id: "1",
-                        nome: "Admin Sistema"
-                    },
-                    data: "2024-02-17T09:45:00",
-                    justificativa: "Solicitada revisão do item 3.2 sobre elegibilidade",
-                    versao: "1.2"
-                }
-            ];
+                data: "2024-02-18T11:20:00",
+                justificativa: "Seções 3 e 5 sobre generics e utility types precisam de revisão conceitual",
+                versao: "1.0"
+            },
+            {
+                id: "h3",
+                termoId: "103",
+                termoTitulo: "Estruturas de Dados: Árvores Binárias",
+                acao: "revisao",
+                revisor: {
+                    id: "1",
+                    nome: "Admin Sistema"
+                },
+                data: "2024-02-17T09:45:00",
+                justificativa: "Solicitada inclusão de exemplos de implementação de árvores AVL",
+                versao: "1.2"
+            },
+            {
+                id: "h4",
+                termoId: "104",
+                termoTitulo: "React Hooks: useState e useEffect",
+                acao: "aprovado",
+                revisor: {
+                    id: "2",
+                    nome: "João Silva"
+                },
+                data: "2024-02-16T10:15:00",
+                justificativa: "Material didático, bem estruturado e com exemplos práticos relevantes",
+                versao: "1.5"
+            },
+            {
+                id: "h5",
+                termoId: "105",
+                termoTitulo: "Banco de Dados NoSQL: MongoDB",
+                acao: "revisao",
+                revisor: {
+                    id: "3",
+                    nome: "Maria Oliveira"
+                },
+                data: "2024-02-15T14:30:00",
+                justificativa: "Solicitada comparação com bancos SQL e mais exemplos de aggregation pipeline",
+                versao: "1.0"
+            }
+        ];
 
             setTermosPendentes(mockPendentes);
             setHistorico(mockHistorico);
@@ -415,7 +469,7 @@ export default function AprovarRecusarTermos() {
                     dataPublicacao: new Date().toISOString()
                 };
 
-                setTermosPendentes(prev => prev.map(t => 
+                setTermosPendentes(prev => prev.map(t =>
                     t.id === selectedTermo.id ? termoAtualizado : t
                 ));
 
@@ -444,7 +498,7 @@ export default function AprovarRecusarTermos() {
                     justificativaRecusa: reviewComment
                 };
 
-                setTermosPendentes(prev => prev.map(t => 
+                setTermosPendentes(prev => prev.map(t =>
                     t.id === selectedTermo.id ? termoAtualizado : t
                 ));
 
@@ -920,13 +974,13 @@ export default function AprovarRecusarTermos() {
 
                                 <div style={styles.modalComment}>
                                     <label style={styles.modalCommentLabel}>
-                                        Justificativa {reviewAction === "recusar" && <span style={{color: "var(--danger)"}}>*</span>}
+                                        Justificativa {reviewAction === "recusar" && <span style={{ color: "var(--danger)" }}>*</span>}
                                     </label>
                                     <textarea
                                         value={reviewComment}
                                         onChange={(e) => setReviewComment(e.target.value)}
-                                        placeholder={reviewAction === "recusar" 
-                                            ? "Digite o motivo da recusa (obrigatório)" 
+                                        placeholder={reviewAction === "recusar"
+                                            ? "Digite o motivo da recusa (obrigatório)"
                                             : "Digite sua justificativa (opcional)"}
                                         rows={4}
                                         style={styles.modalTextarea}
@@ -980,7 +1034,7 @@ export default function AprovarRecusarTermos() {
                 {/* Modal de Visualização do Termo */}
                 {showTermoModal && selectedTermo && (
                     <div style={styles.modalOverlay}>
-                        <div style={{...styles.modal, maxWidth: "800px"}}>
+                        <div style={{ ...styles.modal, maxWidth: "800px" }}>
                             <div style={styles.modalHeader}>
                                 <h3 style={styles.modalTitle}>Visualizar Termo</h3>
                                 <button
@@ -1018,7 +1072,7 @@ export default function AprovarRecusarTermos() {
                 {/* Modal de Vídeo */}
                 {showVideoModal && selectedTermo && selectedTermo.videoExplicativo && (
                     <div style={styles.modalOverlay}>
-                        <div style={{...styles.modal, maxWidth: "800px"}}>
+                        <div style={{ ...styles.modal, maxWidth: "800px" }}>
                             <div style={styles.modalHeader}>
                                 <h3 style={styles.modalTitle}>Vídeo Explicativo</h3>
                                 <button
@@ -1056,7 +1110,7 @@ export default function AprovarRecusarTermos() {
                 {/* Modal de Definições */}
                 {showDefinicoesModal && selectedTermo && selectedTermo.definicoes && (
                     <div style={styles.modalOverlay}>
-                        <div style={{...styles.modal, maxWidth: "600px"}}>
+                        <div style={{ ...styles.modal, maxWidth: "600px" }}>
                             <div style={styles.modalHeader}>
                                 <h3 style={styles.modalTitle}>Definições do Termo</h3>
                                 <button
@@ -1092,7 +1146,7 @@ export default function AprovarRecusarTermos() {
                 {/* Modal de QR Code */}
                 {showQRCodeModal && qrCodeImage && (
                     <div style={styles.modalOverlay}>
-                        <div style={{...styles.modal, maxWidth: "400px"}}>
+                        <div style={{ ...styles.modal, maxWidth: "400px" }}>
                             <div style={styles.modalHeader}>
                                 <h3 style={styles.modalTitle}>QR Code Gerado</h3>
                                 <button
@@ -1102,17 +1156,17 @@ export default function AprovarRecusarTermos() {
                                     ×
                                 </button>
                             </div>
-                            <div style={{...styles.modalBody, textAlign: "center"}}>
-                                <img 
-                                    src={qrCodeImage} 
-                                    alt="QR Code do termo" 
+                            <div style={{ ...styles.modalBody, textAlign: "center" }}>
+                                <img
+                                    src={qrCodeImage}
+                                    alt="QR Code do termo"
                                     style={styles.qrCodeImage}
                                 />
                                 <p style={styles.qrCodeInfo}>
                                     QR Code gerado automaticamente para o termo aprovado.
                                 </p>
                                 <p style={styles.qrCodeInfo}>
-                                    Status: <strong style={{color: "var(--success)"}}>Publicado</strong>
+                                    Status: <strong style={{ color: "var(--success)" }}>Publicado</strong>
                                 </p>
                             </div>
                             <div style={styles.modalFooter}>
@@ -1123,7 +1177,7 @@ export default function AprovarRecusarTermos() {
                                         link.href = qrCodeImage;
                                         link.click();
                                     }}
-                                    style={{...styles.modalSubmitButton, background: "var(--primary)"}}
+                                    style={{ ...styles.modalSubmitButton, background: "var(--primary)" }}
                                 >
                                     <FaDownload /> Baixar QR Code
                                 </button>

@@ -623,7 +623,7 @@ export default function GerenciarMateriaisDidaticos() {
                 {/* Header */}
                 <div style={styles.header}>
                     <div>
-                        <h1 style={styles.title}>Materiais Didáticos</h1>
+                        <h1 style={styles.title}>Livros Didáticos</h1>
                         <p style={styles.subtitle}>
                             Gerencie conteúdos educacionais, associe termos do glossário e verifique vídeos em Libras
                         </p>

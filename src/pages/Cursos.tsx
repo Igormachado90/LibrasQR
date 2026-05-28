@@ -802,17 +802,6 @@ export default function GerenciarCursos() {
         }
     };
 
-    const handleSort = (key: string) => {
-        setSortConfig({
-            key,
-            direction: sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc"
-        });
-    };
-
-    const getSortIcon = (key: string) => {
-        if (sortConfig.key !== key) return <FaSort style={{ opacity: 0.3 }} />;
-        return sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />;
-    };
 
     const filteredCursos = cursos
         .filter(curso => {
@@ -905,11 +894,6 @@ export default function GerenciarCursos() {
         navigate(`/curso/${id}`);
     };
 
-    const handleGerarQRCode = (curso: Curso) => {
-        setSelectedCurso(curso);
-        setShowQRCodeModal(true);
-    };
-
     const handleDownloadQRCode = () => {
         console.log("Download QR Code");
         setShowQRCodeModal(false);
@@ -935,10 +919,6 @@ export default function GerenciarCursos() {
     const handleVerEstatisticas = (curso: Curso) => {
         setSelectedCurso(curso);
         setShowEstatisticasModal(true);
-    };
-
-    const handleDuplicarCurso = (curso: Curso) => {
-        console.log("Duplicar curso:", curso.id);
     };
 
     if (loading) {
@@ -1166,13 +1146,6 @@ export default function GerenciarCursos() {
                             <div style={styles.cardFooter}>
                                 <div style={styles.quickActions}>
                                     <button
-                                        onClick={() => handleGerarQRCode(curso)}
-                                        style={styles.quickActionButton}
-                                        title="Ver QR Code"
-                                    >
-                                        <FaQrcode />
-                                    </button>
-                                    <button
                                         onClick={() => handleVerTurmas(curso)}
                                         style={styles.quickActionButton}
                                         title="Ver turmas"
@@ -1211,13 +1184,6 @@ export default function GerenciarCursos() {
                                     title="Editar"
                                 >
                                     <FaEdit /> Editar
-                                </button>
-                                <button
-                                    onClick={() => handleDuplicarCurso(curso)}
-                                    style={styles.actionButton}
-                                    title="Duplicar"
-                                >
-                                    <FaCopy /> Duplicar
                                 </button>
                             </div>
                         </div>
@@ -1475,14 +1441,6 @@ export default function GerenciarCursos() {
                                         <div>
                                             <span style={styles.estatisticaValue}>{selectedCurso.estudantes.ativos}</span>
                                             <span style={styles.estatisticaLabel}>Ativos</span>
-                                        </div>
-                                    </div>
-
-                                    <div style={styles.estatisticaCard}>
-                                        <FaStar size={24} color="var(--warning)" />
-                                        <div>
-                                            <span style={styles.estatisticaValue}>{selectedCurso.estudantes.concluintes}</span>
-                                            <span style={styles.estatisticaLabel}>Concluintes</span>
                                         </div>
                                     </div>
 
@@ -1854,7 +1812,8 @@ const styles: Record<string, React.CSSProperties> = {
     cardActions: {
         padding: "12px 16px",
         display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
+        textAlign: "center",
+        gridTemplateColumns: "repeat(2, 1fr)",
         gap: "8px"
     },
     actionButton: {

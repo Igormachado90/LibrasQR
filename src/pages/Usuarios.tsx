@@ -92,7 +92,12 @@ import {
   FaEye,
   FaKey,
   FaFileAlt,
-  FaVideo
+  FaVideo,
+  FaSpinner,
+  FaBuilding,
+  FaMapMarkerAlt,
+  FaStar,
+  FaRegStar
 } from "react-icons/fa";
 
 interface Usuario {
@@ -108,6 +113,8 @@ interface Usuario {
   videosEnviados: number;
   telefone?: string;
   instituicao?: string;
+  cidade?: string;
+  estado?: string;
   avatar?: string;
   permissoes: string[];
 }
@@ -115,14 +122,7 @@ interface Usuario {
 interface Filtros {
   tipo: string;
   status: string;
-  dataInicio: string;
-  dataFim: string;
   busca: string;
-}
-
-interface SortConfig {
-  key: string;
-  direction: "asc" | "desc";
 }
 
 interface Stats {
@@ -130,6 +130,8 @@ interface Stats {
   ativos: number;
   pendentes: number;
   bloqueados: number;
+  totalTermos: number;
+  totalVideos: number;
 }
 
 export default function GerenciarUsuarios() {
@@ -139,25 +141,24 @@ export default function GerenciarUsuarios() {
   const [filtros, setFiltros] = useState<Filtros>({
     tipo: "",
     status: "",
-    dataInicio: "",
-    dataFim: "",
     busca: ""
   });
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>({
     key: "nome",
     direction: "asc"
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [stats, setStats] = useState<Stats>({
     total: 0,
     ativos: 0,
     pendentes: 0,
-    bloqueados: 0
+    bloqueados: 0,
+    totalTermos: 0,
+    totalVideos: 0
   });
   
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
 
   useEffect(() => {
     fetchUsuarios();
@@ -181,7 +182,9 @@ export default function GerenciarUsuarios() {
           termosAssinados: 8,
           videosEnviados: 15,
           telefone: "(11) 98765-4321",
-          instituicao: "Universidade Federal de Pará",
+          instituicao: "Universidade Federal do Pará",
+          cidade: "Belém",
+          estado: "PA",
           permissoes: ["criar_termos", "editar_termos", "enviar_videos"]
         },
         {
@@ -196,7 +199,9 @@ export default function GerenciarUsuarios() {
           termosAssinados: 34,
           videosEnviados: 28,
           telefone: "(11) 97654-3210",
-          instituicao: "Universidade Estado de Pará",
+          instituicao: "Universidade do Estado do Pará",
+          cidade: "Belém",
+          estado: "PA",
           permissoes: ["enviar_videos", "comentar_termos"]
         },
         {
@@ -212,6 +217,8 @@ export default function GerenciarUsuarios() {
           videosEnviados: 0,
           telefone: "(11) 96543-2109",
           instituicao: "Instituto Federal do Pará",
+          cidade: "Tucuruí",
+          estado: "PA",
           permissoes: ["visualizar_termos"]
         },
         {
@@ -226,7 +233,9 @@ export default function GerenciarUsuarios() {
           termosAssinados: 15,
           videosEnviados: 12,
           telefone: "(11) 95432-1098",
-          instituicao: "Universidade Estado do Pará",
+          instituicao: "Universidade Federal Rural da Amazônia",
+          cidade: "Belém",
+          estado: "PA",
           permissoes: ["criar_termos", "editar_termos"]
         },
         {
@@ -242,6 +251,8 @@ export default function GerenciarUsuarios() {
           videosEnviados: 0,
           telefone: "(11) 94321-0987",
           instituicao: "Universidade Federal do Pará",
+          cidade: "Santarém",
+          estado: "PA",
           permissoes: ["visualizar_termos"]
         },
         {
@@ -255,7 +266,44 @@ export default function GerenciarUsuarios() {
           termosCriados: 45,
           termosAssinados: 12,
           videosEnviados: 30,
+          instituicao: "LibrasQR",
+          cidade: "Belém",
+          estado: "PA",
           permissoes: ["*"]
+        },
+        {
+          id: "7",
+          nome: "Patrícia Lima",
+          email: "patricia.lima@email.com",
+          tipo: "interprete",
+          status: "ativo",
+          dataCadastro: "2024-01-25",
+          ultimoAcesso: "2024-02-19 08:30",
+          termosCriados: 5,
+          termosAssinados: 28,
+          videosEnviados: 22,
+          telefone: "(91) 98765-1234",
+          instituicao: "IFPA - Campus Belém",
+          cidade: "Belém",
+          estado: "PA",
+          permissoes: ["enviar_videos", "comentar_termos"]
+        },
+        {
+          id: "8",
+          nome: "Roberto Alves",
+          email: "roberto.alves@email.com",
+          tipo: "professor",
+          status: "ativo",
+          dataCadastro: "2024-01-18",
+          ultimoAcesso: "2024-02-18 15:20",
+          termosCriados: 18,
+          termosAssinados: 22,
+          videosEnviados: 10,
+          telefone: "(94) 98765-4321",
+          instituicao: "UFPA - Campus Tucuruí",
+          cidade: "Tucuruí",
+          estado: "PA",
+          permissoes: ["criar_termos", "editar_termos", "enviar_videos"]
         }
       ];
       
@@ -265,7 +313,9 @@ export default function GerenciarUsuarios() {
         total: mockUsuarios.length,
         ativos: mockUsuarios.filter(u => u.status === "ativo").length,
         pendentes: mockUsuarios.filter(u => u.status === "pendente").length,
-        bloqueados: mockUsuarios.filter(u => u.status === "bloqueado").length
+        bloqueados: mockUsuarios.filter(u => u.status === "bloqueado").length,
+        totalTermos: mockUsuarios.reduce((acc, u) => acc + u.termosCriados + u.termosAssinados, 0),
+        totalVideos: mockUsuarios.reduce((acc, u) => acc + u.videosEnviados, 0)
       });
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
@@ -290,15 +340,13 @@ export default function GerenciarUsuarios() {
     .filter(user => {
       const matchesBusca = !filtros.busca || 
         user.nome.toLowerCase().includes(filtros.busca.toLowerCase()) ||
-        user.email.toLowerCase().includes(filtros.busca.toLowerCase());
+        user.email.toLowerCase().includes(filtros.busca.toLowerCase()) ||
+        user.instituicao?.toLowerCase().includes(filtros.busca.toLowerCase());
       
       const matchesTipo = !filtros.tipo || user.tipo === filtros.tipo;
       const matchesStatus = !filtros.status || user.status === filtros.status;
       
-      const matchesData = (!filtros.dataInicio || user.dataCadastro >= filtros.dataInicio) &&
-                         (!filtros.dataFim || user.dataCadastro <= filtros.dataFim);
-      
-      return matchesBusca && matchesTipo && matchesStatus && matchesData;
+      return matchesBusca && matchesTipo && matchesStatus;
     })
     .sort((a, b) => {
       const aValue = a[sortConfig.key as keyof Usuario];
@@ -322,34 +370,6 @@ export default function GerenciarUsuarios() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const handleSelectAll = () => {
-    if (selectedUsers.length === paginatedUsers.length) {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(paginatedUsers.map(u => u.id));
-    }
-  };
-
-  const handleSelectUser = (id: string) => {
-    setSelectedUsers(prev =>
-      prev.includes(id) ? prev.filter(uid => uid !== id) : [...prev, id]
-    );
-  };
-
-  const handleBulkAction = (action: string) => {
-    if (selectedUsers.length === 0) return;
-    
-    const confirmMessages = {
-      ativar: `Ativar ${selectedUsers.length} usuário(s)?`,
-      bloquear: `Bloquear ${selectedUsers.length} usuário(s)?`,
-      excluir: `Tem certeza que deseja excluir ${selectedUsers.length} usuário(s)?`
-    };
-    
-    if (window.confirm(confirmMessages[action as keyof typeof confirmMessages])) {
-      console.log(`${action} usuários:`, selectedUsers);
-    }
-  };
 
   const getTipoIcon = (tipo: string) => {
     const icons = {
@@ -382,7 +402,16 @@ export default function GerenciarUsuarios() {
     const style = styles[status as keyof typeof styles] || styles.pendente;
     
     return (
-      <span style={statusBadgeStyle(style.bg, style.color)}>
+      <span style={{
+        background: style.bg,
+        color: style.color,
+        padding: '4px 8px',
+        borderRadius: 12,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        fontSize: 12
+      }}>
         {style.icon} {style.label}
       </span>
     );
@@ -407,7 +436,7 @@ export default function GerenciarUsuarios() {
           <div>
             <h1 style={styles.title}>Gerenciar Usuários</h1>
             <p style={styles.subtitle}>
-              Gerencie todos os usuários da plataforma
+              Gerencie todos os usuários da plataforma e acompanhe suas contribuições
             </p>
           </div>
 
@@ -429,34 +458,22 @@ export default function GerenciarUsuarios() {
 
         {/* Stats Cards */}
         <div style={styles.statsGrid}>
-          <StatCard
-            icon={<FaUsers />}
-            label="Total de Usuários"
-            value={stats.total}
-            color="var(--primary)"
-            bgColor="var(--primary-soft)"
-          />
-          <StatCard
-            icon={<FaUserCheck />}
-            label="Ativos"
-            value={stats.ativos}
-            color="var(--success)"
-            bgColor="var(--success-light)"
-          />
-          <StatCard
-            icon={<FaClock />}
-            label="Pendentes"
-            value={stats.pendentes}
-            color="var(--warning)"
-            bgColor="var(--warning-light)"
-          />
-          <StatCard
-            icon={<FaUserTimes />}
-            label="Bloqueados"
-            value={stats.bloqueados}
-            color="var(--danger)"
-            bgColor="var(--danger-light)"
-          />
+          <div style={styles.statCard}>
+            <FaUsers size={24} color="var(--primary)" />
+            <div><span style={styles.statValue}>{stats.total}</span><span style={styles.statLabel}>Usuários</span></div>
+          </div>
+          <div style={styles.statCard}>
+            <FaUserCheck size={24} color="var(--success)" />
+            <div><span style={styles.statValue}>{stats.ativos}</span><span style={styles.statLabel}>Ativos</span></div>
+          </div>
+          <div style={styles.statCard}>
+            <FaFileAlt size={24} color="var(--info)" />
+            <div><span style={styles.statValue}>{stats.totalTermos}</span><span style={styles.statLabel}>Termos</span></div>
+          </div>
+          <div style={styles.statCard}>
+            <FaVideo size={24} color="var(--warning)" />
+            <div><span style={styles.statValue}>{stats.totalVideos}</span><span style={styles.statLabel}>Vídeos</span></div>
+          </div>
         </div>
 
         {/* Filtros */}
@@ -469,7 +486,7 @@ export default function GerenciarUsuarios() {
                   <FaSearch style={styles.searchIcon} />
                   <input
                     type="text"
-                    placeholder="Nome ou email..."
+                    placeholder="Nome, email ou instituição..."
                     value={filtros.busca}
                     onChange={(e) => setFiltros({ ...filtros, busca: e.target.value })}
                     style={styles.searchInput}
@@ -508,29 +525,24 @@ export default function GerenciarUsuarios() {
               </div>
 
               <div style={styles.filterGroup}>
-                <label style={styles.filterLabel}>Data Início</label>
-                <input
-                  type="date"
-                  value={filtros.dataInicio}
-                  onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
-                  style={styles.filterDate}
-                />
-              </div>
-
-              <div style={styles.filterGroup}>
-                <label style={styles.filterLabel}>Data Fim</label>
-                <input
-                  type="date"
-                  value={filtros.dataFim}
-                  onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
-                  style={styles.filterDate}
-                />
+                <label style={styles.filterLabel}>Ordenar por</label>
+                <div style={styles.sortButtons}>
+                  <button onClick={() => handleSort("nome")} style={{ ...styles.sortButton, background: sortConfig.key === "nome" ? "var(--primary-soft)" : "transparent" }}>
+                    Nome {getSortIcon("nome")}
+                  </button>
+                  <button onClick={() => handleSort("termosCriados")} style={{ ...styles.sortButton, background: sortConfig.key === "termosCriados" ? "var(--primary-soft)" : "transparent" }}>
+                    Termos {getSortIcon("termosCriados")}
+                  </button>
+                  <button onClick={() => handleSort("videosEnviados")} style={{ ...styles.sortButton, background: sortConfig.key === "videosEnviados" ? "var(--primary-soft)" : "transparent" }}>
+                    Vídeos {getSortIcon("videosEnviados")}
+                  </button>
+                </div>
               </div>
             </div>
 
             <div style={styles.filterActions}>
               <button
-                onClick={() => setFiltros({ tipo: "", status: "", dataInicio: "", dataFim: "", busca: "" })}
+                onClick={() => setFiltros({ tipo: "", status: "", busca: "" })}
                 style={styles.clearButton}
               >
                 Limpar Filtros
@@ -539,221 +551,133 @@ export default function GerenciarUsuarios() {
           </div>
         )}
 
-        {/* Ações em Massa */}
-        {selectedUsers.length > 0 && (
-          <div style={styles.bulkActions}>
-            <span style={styles.bulkSelected}>
-              {selectedUsers.length} usuário(s) selecionado(s)
-            </span>
-            <div style={styles.bulkButtons}>
-              <button
-                onClick={() => handleBulkAction("ativar")}
-                style={styles.bulkButton}
-              >
-                <FaUserCheck /> Ativar
-              </button>
-              <button
-                onClick={() => handleBulkAction("bloquear")}
-                style={{ ...styles.bulkButton, color: "var(--warning)" }}
-              >
-                <FaBan /> Bloquear
-              </button>
-              <button
-                onClick={() => handleBulkAction("excluir")}
-                style={{ ...styles.bulkButton, color: "var(--danger)" }}
-              >
-                <FaTrash /> Excluir
-              </button>
-              <button
-                onClick={() => setSelectedUsers([])}
-                style={styles.bulkButton}
-              >
-                Cancelar
-              </button>
+        {/* Grid de Cards */}
+        <div style={styles.cardsGrid}>
+          {paginatedUsers.map((user) => (
+            <div key={user.id} style={styles.userCard}>
+              {/* Card Header */}
+              <div style={styles.cardHeader}>
+                <div style={styles.userAvatar}>
+                  <div style={styles.avatarPlaceholder(user.tipo)}>
+                    {user.nome.charAt(0).toUpperCase()}
+                  </div>
+                </div>
+                <div style={styles.userHeaderInfo}>
+                  <h3 style={styles.userName}>{user.nome}</h3>
+                  <div style={styles.userType}>
+                    {getTipoIcon(user.tipo)}
+                    <span>{getTipoLabel(user.tipo)}</span>
+                  </div>
+                </div>
+                {getStatusBadge(user.status)}
+              </div>
+
+              {/* Informações de Contato */}
+              <div style={styles.cardSection}>
+                <div style={styles.infoRow}>
+                  <FaEnvelope size={12} color="var(--text-tertiary)" />
+                  <span>{user.email}</span>
+                </div>
+                {user.telefone && (
+                  <div style={styles.infoRow}>
+                    <FaPhone size={12} color="var(--text-tertiary)" />
+                    <span>{user.telefone}</span>
+                  </div>
+                )}
+                {user.instituicao && (
+                  <div style={styles.infoRow}>
+                    <FaBuilding size={12} color="var(--text-tertiary)" />
+                    <span>{user.instituicao}</span>
+                  </div>
+                )}
+                {user.cidade && (
+                  <div style={styles.infoRow}>
+                    <FaMapMarkerAlt size={12} color="var(--text-tertiary)" />
+                    <span>{user.cidade}/{user.estado}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Estatísticas de Contribuições */}
+              <div style={styles.cardStats}>
+                <div style={styles.statItem}>
+                  <FaFileAlt size={16} color="var(--primary)" />
+                  <div>
+                    <span style={styles.statNumber}>{user.termosCriados}</span>
+                    <span style={styles.statText}>Termos Criados</span>
+                  </div>
+                </div>
+                <div style={styles.statItem}>
+                  <FaCheckCircle size={16} color="var(--success)" />
+                  <div>
+                    <span style={styles.statNumber}>{user.termosAssinados}</span>
+                    <span style={styles.statText}>Termos Assinados</span>
+                  </div>
+                </div>
+                <div style={styles.statItem}>
+                  <FaVideo size={16} color="var(--warning)" />
+                  <div>
+                    <span style={styles.statNumber}>{user.videosEnviados}</span>
+                    <span style={styles.statText}>Vídeos Enviados</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Último Acesso */}
+              <div style={styles.lastAccessSection}>
+                <FaClock size={12} color="var(--text-tertiary)" />
+                <span>Último acesso: {user.ultimoAcesso}</span>
+              </div>
+
+              {/* Card Actions */}
+              <div style={styles.cardActions}>
+                <button
+                  onClick={() => navigate(`/usuarios/${user.id}`)}
+                  style={styles.actionButton}
+                  title="Visualizar"
+                >
+                  <FaEye /> Ver
+                </button>
+                <button
+                  onClick={() => navigate(`/usuarios/${user.id}/editar`)}
+                  style={styles.actionButton}
+                  title="Editar"
+                >
+                  <FaEdit /> Editar
+                </button>
+                <button
+                  onClick={() => {/* Resetar senha */}}
+                  style={styles.actionButton}
+                  title="Resetar Senha"
+                >
+                  <FaKey /> Senha
+                </button>
+                <button
+                  onClick={() => {/* Bloquear/Desbloquear */}}
+                  style={{ ...styles.actionButton, color: user.status === "bloqueado" ? "var(--success)" : "var(--warning)" }}
+                  title={user.status === "bloqueado" ? "Desbloquear" : "Bloquear"}
+                >
+                  {user.status === "bloqueado" ? <FaUserCheck /> : <FaBan />} {user.status === "bloqueado" ? "Desbloquear" : "Bloquear"}
+                </button>
+                <button
+                  onClick={() => {/* Excluir */}}
+                  style={{ ...styles.actionButton, color: "var(--danger)" }}
+                  title="Excluir"
+                >
+                  <FaTrash /> Excluir
+                </button>
+              </div>
             </div>
+          ))}
+        </div>
+
+        {paginatedUsers.length === 0 && (
+          <div style={styles.emptyState}>
+            <FaUsers size={48} style={{ color: "var(--text-tertiary)", marginBottom: "16px" }} />
+            <h3 style={styles.emptyTitle}>Nenhum usuário encontrado</h3>
+            <p style={styles.emptyText}>Tente ajustar seus filtros ou criar um novo usuário.</p>
           </div>
         )}
-
-        {/* Tabela */}
-        <div style={styles.tableContainer}>
-          <table style={styles.table}>
-            <thead>
-              <tr style={styles.tableHeader}>
-                <th style={styles.checkboxCell}>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.length === paginatedUsers.length && paginatedUsers.length > 0}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th style={styles.tableHeaderCell} onClick={() => handleSort("nome")}>
-                  <div style={styles.sortableHeader}>
-                    Usuário {getSortIcon("nome")}
-                  </div>
-                </th>
-                <th style={styles.tableHeaderCell} onClick={() => handleSort("tipo")}>
-                  <div style={styles.sortableHeader}>
-                    Tipo {getSortIcon("tipo")}
-                  </div>
-                </th>
-                <th style={styles.tableHeaderCell} onClick={() => handleSort("status")}>
-                  <div style={styles.sortableHeader}>
-                    Status {getSortIcon("status")}
-                  </div>
-                </th>
-                <th style={styles.tableHeaderCell}>Contato</th>
-                <th style={styles.tableHeaderCell} onClick={() => handleSort("termosCriados")}>
-                  <div style={styles.sortableHeader}>
-                    Termos {getSortIcon("termosCriados")}
-                  </div>
-                </th>
-                <th style={styles.tableHeaderCell} onClick={() => handleSort("videosEnviados")}>
-                  <div style={styles.sortableHeader}>
-                    Vídeos {getSortIcon("videosEnviados")}
-                  </div>
-                </th>
-                <th style={styles.tableHeaderCell} onClick={() => handleSort("ultimoAcesso")}>
-                  <div style={styles.sortableHeader}>
-                    Último Acesso {getSortIcon("ultimoAcesso")}
-                  </div>
-                </th>
-                <th style={styles.tableHeaderCell}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedUsers.map((user) => (
-                <tr
-                  key={user.id}
-                  style={styles.tableRow}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--bg-hover)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  <td style={styles.checkboxCell}>
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.includes(user.id)}
-                      onChange={() => handleSelectUser(user.id)}
-                    />
-                  </td>
-                  <td style={styles.tableCell}>
-                    <div style={styles.userInfo}>
-                      <div style={styles.userAvatar}>
-                        {user.avatar ? (
-                          <img src={user.avatar} alt={user.nome} style={styles.avatarImage} />
-                        ) : (
-                          <div style={avatarPlaceholderStyle(user.tipo)}>
-                            {user.nome.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <div style={styles.userName}>{user.nome}</div>
-                        <div style={styles.userEmail}>{user.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={styles.tableCell}>
-                    <div style={styles.tipoBadge}>
-                      {getTipoIcon(user.tipo)}
-                      <span>{getTipoLabel(user.tipo)}</span>
-                    </div>
-                  </td>
-                  <td style={styles.tableCell}>{getStatusBadge(user.status)}</td>
-                  <td style={styles.tableCell}>
-                    {user.telefone ? (
-                      <div style={styles.contactInfo}>
-                        <FaPhone size={10} />
-                        <span>{user.telefone}</span>
-                      </div>
-                    ) : (
-                      <span style={{ color: "var(--text-tertiary)" }}>Não informado</span>
-                    )}
-                    {user.instituicao && (
-                      <div style={styles.instituicao}>{user.instituicao}</div>
-                    )}
-                  </td>
-                  <td style={styles.tableCell}>
-                    <div style={styles.counts}>
-                      <span style={styles.countBadge}>
-                        <FaFileAlt /> {user.termosCriados}
-                      </span>
-                      <span style={styles.countBadge}>
-                        <FaCheckCircle /> {user.termosAssinados}
-                      </span>
-                    </div>
-                  </td>
-                  <td style={styles.tableCell}>
-                    <span style={styles.countBadge}>
-                      <FaVideo /> {user.videosEnviados}
-                    </span>
-                  </td>
-                  <td style={styles.tableCell}>
-                    <div style={styles.lastAccess}>
-                      <FaClock size={10} />
-                      <span>{user.ultimoAcesso}</span>
-                    </div>
-                  </td>
-                  <td style={styles.tableCell}>
-                    <div style={styles.actionButtons}>
-                      <button
-                        onClick={() => navigate(`/usuarios/${user.id}`)}
-                        style={styles.actionButton}
-                        title="Visualizar"
-                      >
-                        <FaEye />
-                      </button>
-                      <button
-                        onClick={() => navigate(`/usuarios/${user.id}/editar`)}
-                        style={styles.actionButton}
-                        title="Editar"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => {/* Resetar senha */}}
-                        style={styles.actionButton}
-                        title="Resetar Senha"
-                      >
-                        <FaKey />
-                      </button>
-                      <button
-                        onClick={() => handleUserBlock(user)}
-                        style={{
-                          ...styles.actionButton,
-                          color: user.status === "bloqueado" ? "var(--success)" : "var(--warning)"
-                        }}
-                        title={user.status === "bloqueado" ? "Desbloquear" : "Bloquear"}
-                      >
-                        {user.status === "bloqueado" ? <FaUserCheck /> : <FaBan />}
-                      </button>
-                      <button
-                        onClick={() => handleUserDelete(user)}
-                        style={{ ...styles.actionButton, color: "var(--danger)" }}
-                        title="Excluir"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {paginatedUsers.length === 0 && (
-            <div style={styles.emptyState}>
-              <FaUsers size={48} style={{ color: "var(--text-tertiary)", marginBottom: "16px" }} />
-              <h3 style={styles.emptyTitle}>Nenhum usuário encontrado</h3>
-              <p style={styles.emptyText}>
-                Tente ajustar seus filtros ou criar um novo usuário.
-              </p>
-            </div>
-          )}
-        </div>
 
         {/* Paginação */}
         {totalPages > 1 && (
@@ -761,7 +685,7 @@ export default function GerenciarUsuarios() {
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              style={paginationButtonStyle(currentPage === 1)}
+              style={styles.paginationButton(currentPage === 1)}
             >
               <FaChevronLeft />
             </button>
@@ -770,7 +694,7 @@ export default function GerenciarUsuarios() {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                style={paginationButtonStyle(false, currentPage === page)}
+                style={styles.paginationButton(false, currentPage === page)}
               >
                 {page}
               </button>
@@ -779,7 +703,7 @@ export default function GerenciarUsuarios() {
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              style={paginationButtonStyle(currentPage === totalPages)}
+              style={styles.paginationButton(currentPage === totalPages)}
             >
               <FaChevronRight />
             </button>
@@ -788,46 +712,15 @@ export default function GerenciarUsuarios() {
       </div>
     </DashboardLayout>
   );
-
-  // Funções auxiliares
-  function handleUserBlock(user: Usuario) {
-    const action = user.status === "bloqueado" ? "desbloquear" : "bloquear";
-    if (window.confirm(`${action} usuário ${user.nome}?`)) {
-      console.log(`${action}:`, user.id);
-    }
-  }
-
-  function handleUserDelete(user: Usuario) {
-    if (window.confirm(`Excluir usuário ${user.nome}?`)) {
-      console.log("Excluir:", user.id);
-    }
-  }
 }
 
-function StatCard({ icon, label, value, color, bgColor }: any) {
-  return (
-    <div style={styles.statCard}>
-      <div style={styles.statCardContent}>
-        <div>
-          <div style={styles.statLabel}>{label}</div>
-          <div style={styles.statValue}>{value}</div>
-        </div>
-        <div style={statIconStyle(bgColor, color)}>
-          {icon}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Estilos
-const styles: Record<string, React.CSSProperties> = {
+const styles: Record<string, any> = {
   container: {
     animation: "fadeIn 0.5s ease-out"
   },
   loadingContainer: {
     display: "flex",
-    flexDirection: "column" as const,
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     minHeight: "60vh"
@@ -846,12 +739,8 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "24px",
-    flexWrap: "wrap" as const,
+    flexWrap: "wrap",
     gap: "16px"
-  },
-  headerActions: {
-    display: "flex",
-    gap: "12px"
   },
   title: {
     margin: 0,
@@ -864,80 +753,76 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "14px",
     color: "var(--text-tertiary)"
   },
+  headerActions: {
+    display: "flex",
+    gap: "12px"
+  },
+  primaryButton: {
+    padding: "10px 20px",
+    background: "var(--primary)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "500",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    cursor: "pointer"
+  },
+  filterButton: {
+    padding: "10px 20px",
+    borderRadius: "8px",
+    border: "1px solid var(--border-color)",
+    background: "transparent",
+    color: "var(--text-secondary)",
+    fontSize: "14px",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    cursor: "pointer"
+  },
   statsGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "20px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: "16px",
     marginBottom: "24px"
   },
   statCard: {
-    background: "var(--bg-secondary)",
-    borderRadius: "12px",
-    padding: "20px"
-  },
-  statCardContent: {
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  statLabel: {
-    fontSize: "14px",
-    color: "var(--text-tertiary)",
-    marginBottom: "8px"
+    alignItems: "center",
+    gap: "12px",
+    padding: "16px",
+    background: "var(--card-bg)",
+    borderRadius: "12px",
+    border: "1px solid var(--border-color)"
   },
   statValue: {
-    fontSize: "28px",
-    fontWeight: "600",
-    color: "var(--text-primary)"
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "var(--text-primary)",
+    display: "block",
+    lineHeight: 1.2
   },
-  statIcon: {
-    width: "48px",
-    height: "48px",
-    borderRadius: "12px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "24px"
-  },
-  filterButton: {
-    padding: "8px 16px",
-    background: "transparent",
-    border: "1px solid var(--border-color)",
-    borderRadius: "6px",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    cursor: "pointer",
+  statLabel: {
     fontSize: "13px",
-    color: "var(--text-secondary)"
-  },
-  primaryButton: {
-    padding: "8px 16px",
-    background: "var(--primary)",
-    border: "none",
-    borderRadius: "6px",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    cursor: "pointer",
-    fontSize: "13px",
-    color: "#fff"
+    color: "var(--text-tertiary)"
   },
   filtersPanel: {
-    background: "var(--bg-secondary)",
-    borderRadius: "8px",
+    background: "var(--bg-tertiary)",
+    borderRadius: "12px",
     padding: "20px",
     marginBottom: "24px"
   },
   filtersGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
     gap: "16px",
     marginBottom: "16px"
   },
   filterGroup: {
     display: "flex",
-    flexDirection: "column" as const,
+    flexDirection: "column",
     gap: "6px"
   },
   filterLabel: {
@@ -946,40 +831,50 @@ const styles: Record<string, React.CSSProperties> = {
     color: "var(--text-tertiary)"
   },
   searchBox: {
-    position: "relative" as const,
-    display: "flex",
-    alignItems: "center"
+    position: "relative"
   },
   searchIcon: {
-    position: "absolute" as const,
+    position: "absolute",
     left: "10px",
+    top: "50%",
+    transform: "translateY(-50%)",
     color: "var(--text-tertiary)",
     fontSize: "14px"
   },
   searchInput: {
     width: "100%",
-    padding: "8px 8px 8px 32px",
-    borderRadius: "4px",
+    padding: "10px 10px 10px 32px",
+    borderRadius: "8px",
     border: "1px solid var(--border-color)",
     background: "var(--input-bg)",
     color: "var(--text-primary)",
-    fontSize: "13px"
+    fontSize: "14px",
+    outline: "none"
   },
   filterSelect: {
-    padding: "8px",
-    borderRadius: "4px",
+    padding: "10px",
+    borderRadius: "8px",
     border: "1px solid var(--border-color)",
     background: "var(--input-bg)",
     color: "var(--text-primary)",
     fontSize: "13px"
   },
-  filterDate: {
-    padding: "8px",
-    borderRadius: "4px",
+  sortButtons: {
+    display: "flex",
+    gap: "8px",
+    flexWrap: "wrap"
+  },
+  sortButton: {
+    padding: "8px 12px",
+    borderRadius: "6px",
     border: "1px solid var(--border-color)",
-    background: "var(--input-bg)",
-    color: "var(--text-primary)",
-    fontSize: "13px"
+    background: "transparent",
+    color: "var(--text-secondary)",
+    fontSize: "12px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px"
   },
   filterActions: {
     display: "flex",
@@ -988,179 +883,153 @@ const styles: Record<string, React.CSSProperties> = {
     paddingTop: "16px"
   },
   clearButton: {
-    padding: "6px 12px",
-    background: "transparent",
-    border: "none",
-    color: "var(--primary)",
-    cursor: "pointer",
-    fontSize: "13px"
-  },
-  bulkActions: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    background: "var(--primary-soft)",
-    padding: "12px 16px",
-    borderRadius: "8px",
-    marginBottom: "20px"
-  },
-  bulkSelected: {
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "var(--primary)"
-  },
-  bulkButtons: {
-    display: "flex",
-    gap: "8px"
-  },
-  bulkButton: {
-    padding: "6px 12px",
-    background: "transparent",
+    padding: "8px 16px",
+    borderRadius: "6px",
     border: "1px solid var(--border-color)",
-    borderRadius: "4px",
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    cursor: "pointer",
-    fontSize: "12px",
-    color: "var(--text-secondary)"
-  },
-  tableContainer: {
-    background: "var(--bg-secondary)",
-    borderRadius: "12px",
-    overflow: "hidden",
-    marginBottom: "24px"
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse" as const
-  },
-  tableHeader: {
-    background: "var(--bg-tertiary)",
-    borderBottom: "1px solid var(--border-color)"
-  },
-  tableHeaderCell: {
-    padding: "12px 16px",
-    textAlign: "left" as const,
-    fontSize: "12px",
-    fontWeight: "600",
-    color: "var(--text-tertiary)",
+    background: "transparent",
+    color: "var(--text-secondary)",
+    fontSize: "13px",
     cursor: "pointer"
   },
-  sortableHeader: {
+  cardsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))",
+    gap: "20px",
+    marginBottom: "24px"
+  },
+  userCard: {
+    background: "var(--card-bg)",
+    borderRadius: "16px",
+    border: "1px solid var(--border-color)",
+    overflow: "hidden",
+    transition: "transform 0.2s, box-shadow 0.2s"
+  },
+  cardHeader: {
+    padding: "16px",
     display: "flex",
     alignItems: "center",
-    gap: "4px"
-  },
-  checkboxCell: {
-    width: "40px",
-    padding: "12px 16px",
-    textAlign: "center" as const
-  },
-  tableRow: {
+    gap: "12px",
     borderBottom: "1px solid var(--border-color)",
-    transition: "background-color 0.2s"
-  },
-  tableCell: {
-    padding: "12px 16px",
-    fontSize: "13px",
-    color: "var(--text-secondary)"
-  },
-  userInfo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px"
+    background: "var(--bg-tertiary)"
   },
   userAvatar: {
-    width: "36px",
-    height: "36px",
-    borderRadius: "50%",
-    overflow: "hidden"
+    flexShrink: 0
   },
-  avatarImage: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover" as const
-  },
-  avatarPlaceholder: {
-    width: "36px",
-    height: "36px",
+  avatarPlaceholder: (tipo: string) => ({
+    width: "48px",
+    height: "48px",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "14px",
-    fontWeight: "600"
+    fontSize: "18px",
+    fontWeight: "600",
+    background: `var(--${tipo}-light)`,
+    color: `var(--${tipo})`
+  }),
+  userHeaderInfo: {
+    flex: 1
   },
   userName: {
-    fontSize: "14px",
-    fontWeight: "500",
+    margin: 0,
+    fontSize: "16px",
+    fontWeight: "600",
     color: "var(--text-primary)",
-    marginBottom: "2px"
+    marginBottom: "4px"
   },
-  userEmail: {
-    fontSize: "12px",
-    color: "var(--text-tertiary)"
-  },
-  tipoBadge: {
+  userType: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
     padding: "4px 8px",
-    borderRadius: "4px",
-    background: "var(--bg-tertiary)",
+    borderRadius: "20px",
+    background: "var(--bg-secondary)",
     fontSize: "11px",
+    fontWeight: "500",
     color: "var(--text-secondary)"
   },
-  contactInfo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    fontSize: "12px",
-    marginBottom: "4px"
-  },
-  instituicao: {
-    fontSize: "11px",
-    color: "var(--text-tertiary)"
-  },
-  counts: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "4px"
-  },
-  countBadge: {
+  statusBadge: (bg: string, color: string) => ({
     display: "inline-flex",
     alignItems: "center",
     gap: "4px",
+    padding: "4px 8px",
+    borderRadius: "20px",
     fontSize: "11px",
-    color: "var(--text-secondary)"
+    fontWeight: "600",
+    background: bg,
+    color: color
+  }),
+  cardSection: {
+    padding: "12px 16px",
+    borderBottom: "1px solid var(--border-color)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px"
   },
-  lastAccess: {
+  infoRow: {
     display: "flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "8px",
+    fontSize: "13px",
+    color: "var(--text-secondary)"
+  },
+  cardStats: {
+    padding: "12px 16px",
+    borderBottom: "1px solid var(--border-color)",
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "12px"
+  },
+  statItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    textAlign: "center"
+  },
+  statNumber: {
+    display: "block",
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "var(--text-primary)"
+  },
+  statText: {
+    display: "block",
+    fontSize: "10px",
+    color: "var(--text-tertiary)"
+  },
+  lastAccessSection: {
+    padding: "10px 16px",
+    borderBottom: "1px solid var(--border-color)",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
     fontSize: "11px",
     color: "var(--text-tertiary)"
   },
-  actionButtons: {
-    display: "flex",
-    gap: "6px"
+  cardActions: {
+    padding: "12px 16px",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+    gap: "8px"
   },
   actionButton: {
-    padding: "4px",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    border: "1px solid var(--border-color)",
     background: "transparent",
-    border: "none",
-    cursor: "pointer",
     color: "var(--text-secondary)",
-    fontSize: "14px",
+    fontSize: "12px",
+    cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    transition: "color 0.2s"
+    gap: "6px",
+    transition: "all 0.2s"
   },
   emptyState: {
-    textAlign: "center" as const,
-    padding: "48px 24px"
+    textAlign: "center",
+    padding: "48px",
+    color: "var(--text-tertiary)"
   },
   emptyTitle: {
     fontSize: "16px",
@@ -1175,59 +1044,13 @@ const styles: Record<string, React.CSSProperties> = {
   pagination: {
     display: "flex",
     justifyContent: "center",
-    gap: "4px"
-  }
-};
-
-// Funções auxiliares de estilo
-function statusBadgeStyle(bg: string, color: string): React.CSSProperties {
-  return {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    padding: "4px 8px",
-    borderRadius: "4px",
-    fontSize: "11px",
-    fontWeight: "600",
-    background: bg,
-    color: color
-  };
-}
-
-function avatarPlaceholderStyle(tipo: string): React.CSSProperties {
-  return {
+    gap: "8px",
+    marginTop: "24px"
+  },
+  paginationButton: (disabled: boolean = false, active: boolean = false) => ({
     width: "36px",
     height: "36px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "14px",
-    fontWeight: "600",
-    background: `var(--${tipo}-light)`,
-    color: `var(--${tipo})`
-  };
-}
-
-function statIconStyle(bgColor: string, color: string): React.CSSProperties {
-  return {
-    width: "48px",
-    height: "48px",
-    borderRadius: "12px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "24px",
-    background: bgColor,
-    color: color
-  };
-}
-
-function paginationButtonStyle(disabled: boolean = false, active: boolean = false): React.CSSProperties {
-  return {
-    width: "36px",
-    height: "36px",
-    borderRadius: "6px",
+    borderRadius: "8px",
     border: "1px solid var(--border-color)",
     background: active ? "var(--primary)" : "transparent",
     color: active ? "#fff" : disabled ? "var(--text-tertiary)" : "var(--text-secondary)",
@@ -1236,5 +1059,15 @@ function paginationButtonStyle(disabled: boolean = false, active: boolean = fals
     alignItems: "center",
     justifyContent: "center",
     opacity: disabled ? 0.5 : 1
-  };
-}
+  })
+};
+
+// Adicionar keyframes
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .action-button:hover { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); }
+  .user-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+`;
+document.head.appendChild(style);

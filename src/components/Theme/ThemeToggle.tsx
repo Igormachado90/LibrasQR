@@ -1,5 +1,6 @@
+import { IoSunny } from "react-icons/io5";
 import { useTheme } from "../contexts/ThemeContext";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaMoon } from "react-icons/fa";
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
@@ -32,7 +33,7 @@ export default function ThemeToggle() {
         e.currentTarget.style.transform = "scale(1)";
       }}
     >
-      {theme === "light" ? <FaMoon /> : <FaSun />}
+      {theme === "light" ? <FaMoon /> : <IoSunny />}
     </button>
   );
 }

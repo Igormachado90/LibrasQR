@@ -70,11 +70,12 @@ import {
     FaQrcode,
     FaShare
 } from "react-icons/fa";
+import supabase from "../lib/supabase";
 
 interface Termo {
     id: string;
     titulo: string;
-    descricao: string;
+    definicao: string;
     categoria: string;
     status: "pendente" | "aprovado" | "recusado" | "arquivado";
     versao: string;
@@ -89,30 +90,31 @@ interface Termo {
     visualizacoes: number;
     assinaturas: number;
     tags: string[];
-    arquivo?: string;
 }
 
 export default function GerenciarTermos() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
     const [termos, setTermos] = useState<Termo[]>([]);
+    const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"todos" | "pendente" | "aprovado" | "recusado" | "arquivado">("todos");
     const [searchTerm, setSearchTerm] = useState("");
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<{ categoria?: string; dataInicio?: string; dataFim?: string }>({
         categoria: "",
         dataInicio: "",
         dataFim: ""
     });
-    const [sortConfig, setSortConfig] = useState({
-        key: "dataCriacao",
-        direction: "desc"
-    });
+    // const [sortConfig, setSortConfig] = useState({
+    //     key: "dataCriacao",
+    //     direction: "desc"
+    // });
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedTermos, setSelectedTermos] = useState<string[]>([]);
     const [showFilters, setShowFilters] = useState(false);
-    const itemsPerPage = 10;
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>(
+        { key: "dataCriacao", direction: "desc" }
+    );
 
-    const categorias = [
+    const categorias: string[] = [
         "Conceitos Básicos",
         "Estruturas de Controle",
         "Estruturas de Dados",
@@ -123,6 +125,9 @@ export default function GerenciarTermos() {
         "Linguagens de Programação"
     ];
 
+    const itemsPerPage = 10;
+    const [page, setPage] = useState(1);
+
     useEffect(() => {
         fetchTermos();
     }, [activeTab]);
@@ -132,621 +137,650 @@ export default function GerenciarTermos() {
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const mockTermos: Termo[] = [
-                {
-                    id: "1",
-                    titulo: "Algoritmos de Ordenação - Quick Sort",
-                    descricao: "Implementação e análise do algoritmo de ordenação Quick Sort em diferentes linguagens",
-                    categoria: "Algoritmos",
-                    status: "aprovado",
-                    versao: "2.1",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-15",
-                    dataPublicacao: "2024-02-20",
-                    visualizacoes: 234,
-                    assinaturas: 45,
-                    tags: ["quick sort", "ordenação", "algoritmos", "complexidade"]
-                },
-                {
-                    id: "2",
-                    titulo: "Estruturas Condicionais em Python",
-                    descricao: "Guia completo sobre if/else, elif e estruturas de decisão em Python",
-                    categoria: "Estruturas de Controle",
-                    status: "pendente",
-                    versao: "1.0",
-                    autor: {
-                        id: "2",
-                        nome: "João Silva",
-                        tipo: "gestor"
-                    },
-                    dataCriacao: "2024-02-18",
-                    visualizacoes: 56,
-                    assinaturas: 0,
-                    tags: ["python", "if-else", "condicionais", "estruturas de controle"]
-                },
-                {
-                    id: "3",
-                    titulo: "Manipulação de Arrays em JavaScript",
-                    descricao: "Métodos avançados para manipulação de arrays: map, filter, reduce, forEach",
-                    categoria: "Estruturas de Dados",
-                    status: "aprovado",
-                    versao: "3.0",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-10",
-                    dataPublicacao: "2024-02-12",
-                    visualizacoes: 567,
-                    assinaturas: 189,
-                    tags: ["javascript", "arrays", "métodos", "estruturas de dados"]
-                },
-                {
-                    id: "4",
-                    titulo: "Classes e Herança em Java",
-                    descricao: "Fundamentos de Programação Orientada a Objetos com Java: classes, herança, polimorfismo",
-                    categoria: "Programação Orientada a Objetos",
-                    status: "recusado",
-                    versao: "1.2",
-                    autor: {
-                        id: "3",
-                        nome: "Maria Oliveira",
-                        tipo: "profissional"
-                    },
-                    dataCriacao: "2024-02-05",
-                    dataArquivamento: "2024-02-08",
-                    visualizacoes: 123,
-                    assinaturas: 0,
-                    tags: ["java", "poo", "classes", "herança", "polimorfismo"]
-                },
-                {
-                    id: "5",
-                    titulo: "Consultas SQL com JOIN",
-                    descricao: "Tutorial avançado de consultas SQL utilizando INNER JOIN, LEFT JOIN e RIGHT JOIN",
-                    categoria: "Banco de Dados",
-                    status: "pendente",
-                    versao: "1.5",
-                    autor: {
-                        id: "2",
-                        nome: "João Silva",
-                        tipo: "gestor"
-                    },
-                    dataCriacao: "2024-02-19",
-                    visualizacoes: 89,
-                    assinaturas: 0,
-                    tags: ["sql", "banco de dados", "joins", "consultas"]
-                },
-                {
-                    id: "6",
-                    titulo: "Funções Recursivas",
-                    descricao: "Conceitos e exemplos de recursividade em diferentes linguagens de programação",
-                    categoria: "Funções",
-                    status: "aprovado",
-                    versao: "2.0",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-01",
-                    dataPublicacao: "2024-02-03",
-                    visualizacoes: 892,
-                    assinaturas: 234,
-                    tags: ["recursividade", "funções", "algoritmos"]
-                },
-                {
-                    id: "7",
-                    titulo: "Variáveis e Tipos de Dados",
-                    descricao: "Introdução aos tipos primitivos, variáveis e constantes em programação",
-                    categoria: "Conceitos Básicos",
-                    status: "arquivado",
-                    versao: "1.0",
-                    autor: {
-                        id: "3",
-                        nome: "Maria Oliveira",
-                        tipo: "profissional"
-                    },
-                    dataCriacao: "2024-01-15",
-                    dataArquivamento: "2024-02-01",
-                    visualizacoes: 45,
-                    assinaturas: 12,
-                    tags: ["variáveis", "tipos de dados", "constantes", "iniciante"]
-                },
-                {
-                    id: "8",
-                    titulo: "TypeScript: Tipagem Estática",
-                    descricao: "Guia completo sobre os benefícios e uso da tipagem estática com TypeScript",
-                    categoria: "Linguagens de Programação",
-                    status: "aprovado",
-                    versao: "1.3",
-                    autor: {
-                        id: "2",
-                        nome: "João Silva",
-                        tipo: "gestor"
-                    },
-                    dataCriacao: "2024-02-14",
-                    dataPublicacao: "2024-02-16",
-                    visualizacoes: 445,
-                    assinaturas: 78,
-                    tags: ["typescript", "tipagem", "javascript", "frontend"]
-                },
-                {
-                    id: "9",
-                    titulo: "Estruturas de Repetição: While e For",
-                    descricao: "Diferenças entre while, do-while e for, com exemplos práticos",
-                    categoria: "Estruturas de Controle",
-                    status: "pendente",
-                    versao: "2.2",
-                    autor: {
-                        id: "1",
-                        nome: "Admin Sistema",
-                        tipo: "admin"
-                    },
-                    dataCriacao: "2024-02-17",
-                    visualizacoes: 167,
-                    assinaturas: 0,
-                    tags: ["loops", "while", "for", "repetição"]
-                },
-                {
-                    id: "10",
-                    titulo: "Listas Encadeadas",
-                    descricao: "Implementação de listas simplesmente e duplamente encadeadas",
-                    categoria: "Estruturas de Dados",
-                    status: "aprovado",
-                    versao: "2.5",
-                    autor: {
-                        id: "3",
-                        nome: "Maria Oliveira",
-                        tipo: "profissional"
-                    },
-                    dataCriacao: "2024-02-08",
-                    dataPublicacao: "2024-02-11",
-                    visualizacoes: 678,
-                    assinaturas: 145,
-                    tags: ["listas encadeadas", "ponteiros", "estruturas dinâmicas"]
-                }
-            ];
+            // const mockTermos: Termo[] = [
+            //     {
+            //         id: "1",
+            //         titulo: "Algoritmos de Ordenação - Quick Sort",
+            //         definicao: "Implementação e análise do algoritmo de ordenação Quick Sort em diferentes linguagens",
+            //         categoria: "Algoritmos",
+            //         status: "aprovado",
+            //         versao: "2.1",
+            //         autor: {
+            //             id: "1",
+            //             nome: "Admin Sistema",
+            //             tipo: "admin"
+            //         },
+            //         dataCriacao: "2024-02-15",
+            //         dataPublicacao: "2024-02-20",
+            //         visualizacoes: 234,
+            //         assinaturas: 45,
+            //         tags: ["quick sort", "ordenação", "algoritmos", "complexidade"]
+            //     },
+            //     {
+            //         id: "2",
+            //         titulo: "Estruturas Condicionais em Python",
+            //         definicao: "Guia completo sobre if/else, elif e estruturas de decisão em Python",
+            //         categoria: "Estruturas de Controle",
+            //         status: "pendente",
+            //         versao: "1.0",
+            //         autor: {
+            //             id: "2",
+            //             nome: "João Silva",
+            //             tipo: "gestor"
+            //         },
+            //         dataCriacao: "2024-02-18",
+            //         visualizacoes: 56,
+            //         assinaturas: 0,
+            //         tags: ["python", "if-else", "condicionais", "estruturas de controle"]
+            //     },
+            //     {
+            //         id: "3",
+            //         titulo: "Manipulação de Arrays em JavaScript",
+            //         definicao: "Métodos avançados para manipulação de arrays: map, filter, reduce, forEach",
+            //         categoria: "Estruturas de Dados",
+            //         status: "aprovado",
+            //         versao: "3.0",
+            //         autor: {
+            //             id: "1",
+            //             nome: "Admin Sistema",
+            //             tipo: "admin"
+            //         },
+            //         dataCriacao: "2024-02-10",
+            //         dataPublicacao: "2024-02-12",
+            //         visualizacoes: 567,
+            //         assinaturas: 189,
+            //         tags: ["javascript", "arrays", "métodos", "estruturas de dados"]
+            //     },
+            //     {
+            //         id: "4",
+            //         titulo: "Classes e Herança em Java",
+            //         definicao: "Fundamentos de Programação Orientada a Objetos com Java: classes, herança, polimorfismo",
+            //         categoria: "Programação Orientada a Objetos",
+            //         status: "recusado",
+            //         versao: "1.2",
+            //         autor: {
+            //             id: "3",
+            //             nome: "Maria Oliveira",
+            //             tipo: "profissional"
+            //         },
+            //         dataCriacao: "2024-02-05",
+            //         dataArquivamento: "2024-02-08",
+            //         visualizacoes: 123,
+            //         assinaturas: 0,
+            //         tags: ["java", "poo", "classes", "herança", "polimorfismo"]
+            //     },
+            //     {
+            //         id: "5",
+            //         titulo: "Consultas SQL com JOIN",
+            //         definicao: "Tutorial avançado de consultas SQL utilizando INNER JOIN, LEFT JOIN e RIGHT JOIN",
+            //         categoria: "Banco de Dados",
+            //         status: "pendente",
+            //         versao: "1.5",
+            //         autor: {
+            //             id: "2",
+            //             nome: "João Silva",
+            //             tipo: "gestor"
+            //         },
+            //         dataCriacao: "2024-02-19",
+            //         visualizacoes: 89,
+            //         assinaturas: 0,
+            //         tags: ["sql", "banco de dados", "joins", "consultas"]
+            //     },
+            //     {
+            //         id: "6",
+            //         titulo: "Funções Recursivas",
+            //         definicao: "Conceitos e exemplos de recursividade em diferentes linguagens de programação",
+            //         categoria: "Funções",
+            //         status: "aprovado",
+            //         versao: "2.0",
+            //         autor: {
+            //             id: "1",
+            //             nome: "Admin Sistema",
+            //             tipo: "admin"
+            //         },
+            //         dataCriacao: "2024-02-01",
+            //         dataPublicacao: "2024-02-03",
+            //         visualizacoes: 892,
+            //         assinaturas: 234,
+            //         tags: ["recursividade", "funções", "algoritmos"]
+            //     },
+            //     {
+            //         id: "7",
+            //         titulo: "Variáveis e Tipos de Dados",
+            //         definicao: "Introdução aos tipos primitivos, variáveis e constantes em programação",
+            //         categoria: "Conceitos Básicos",
+            //         status: "arquivado",
+            //         versao: "1.0",
+            //         autor: {
+            //             id: "3",
+            //             nome: "Maria Oliveira",
+            //             tipo: "profissional"
+            //         },
+            //         dataCriacao: "2024-01-15",
+            //         dataArquivamento: "2024-02-01",
+            //         visualizacoes: 45,
+            //         assinaturas: 12,
+            //         tags: ["variáveis", "tipos de dados", "constantes", "iniciante"]
+            //     },
+            //     {
+            //         id: "8",
+            //         titulo: "TypeScript: Tipagem Estática",
+            //         definicao: "Guia completo sobre os benefícios e uso da tipagem estática com TypeScript",
+            //         categoria: "Linguagens de Programação",
+            //         status: "aprovado",
+            //         versao: "1.3",
+            //         autor: {
+            //             id: "2",
+            //             nome: "João Silva",
+            //             tipo: "gestor"
+            //         },
+            //         dataCriacao: "2024-02-14",
+            //         dataPublicacao: "2024-02-16",
+            //         visualizacoes: 445,
+            //         assinaturas: 78,
+            //         tags: ["typescript", "tipagem", "javascript", "frontend"]
+            //     },
+            //     {
+            //         id: "9",
+            //         titulo: "Estruturas de Repetição: While e For",
+            //         definicao: "Diferenças entre while, do-while e for, com exemplos práticos",
+            //         categoria: "Estruturas de Controle",
+            //         status: "pendente",
+            //         versao: "2.2",
+            //         autor: {
+            //             id: "1",
+            //             nome: "Admin Sistema",
+            //             tipo: "admin"
+            //         },
+            //         dataCriacao: "2024-02-17",
+            //         visualizacoes: 167,
+            //         assinaturas: 0,
+            //         tags: ["loops", "while", "for", "repetição"]
+            //     },
+            //     {
+            //         id: "10",
+            //         titulo: "Listas Encadeadas",
+            //         definicao: "Implementação de listas simplesmente e duplamente encadeadas",
+            //         categoria: "Estruturas de Dados",
+            //         status: "aprovado",
+            //         versao: "2.5",
+            //         autor: {
+            //             id: "3",
+            //             nome: "Maria Oliveira",
+            //             tipo: "profissional"
+            //         },
+            //         dataCriacao: "2024-02-08",
+            //         dataPublicacao: "2024-02-11",
+            //         visualizacoes: 678,
+            //         assinaturas: 145,
+            //         tags: ["listas encadeadas", "ponteiros", "estruturas dinâmicas"]
+            //     }
+            // ];
 
-            const filteredByStatus = activeTab === "todos"
-                ? mockTermos
-                : mockTermos.filter(t => t.status === activeTab);
+            let query = supabase.from("termos")
+                .select("*")
+                .order("dataCriacao", { ascending: false });
 
-            setTermos(filteredByStatus);
-        } catch (error) {
-            console.error("Erro ao buscar termos:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSort = (key: string) => {
-        setSortConfig({
-            key,
-            direction: sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc"
-        });
-    };
-
-    const getSortIcon = (key: string) => {
-        if (sortConfig.key !== key) return <FaSort style={{ opacity: 0.3 }} />;
-        return sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />;
-    };
-
-    const filteredTermos = termos
-        .filter(termo => {
-            const matchesSearch = termo.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                termo.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                termo.tags.some(tag => tag.includes(searchTerm.toLowerCase()));
-
-            const matchesCategoria = !filters.categoria || termo.categoria === filters.categoria;
-
-            const matchesDataInicio = !filters.dataInicio ||
-                new Date(termo.dataCriacao) >= new Date(filters.dataInicio);
-
-            const matchesDataFim = !filters.dataFim ||
-                new Date(termo.dataCriacao) <= new Date(filters.dataFim);
-
-            return matchesSearch && matchesCategoria && matchesDataInicio && matchesDataFim;
-        })
-        .sort((a, b) => {
-            const aValue = a[sortConfig.key as keyof Termo];
-            const bValue = b[sortConfig.key as keyof Termo];
-
-            if (sortConfig.key === "autor") {
-                return sortConfig.direction === "asc"
-                    ? a.autor.nome.localeCompare(b.autor.nome)
-                    : b.autor.nome.localeCompare(a.autor.nome);
+            if (activeTab !== "todos") {
+                query = query.eq("status", activeTab);
             }
 
-            if (typeof aValue === "string" && typeof bValue === "string") {
-                return sortConfig.direction === "asc"
-                    ? aValue.localeCompare(bValue)
-                    : bValue.localeCompare(aValue);
+            const { data, error } = await query;
+            if (error) {
+                console.error(error);
+                setLoading(false);
+                return;
             }
 
-            if (typeof aValue === "number" && typeof bValue === "number") {
-                return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
-            }
+            setTermos(data as Termo[]);
+            // setLoading(false);
 
-            return 0;
-        });
+            // const filteredByStatus = activeTab === "todos"
+            // ? mockTermos
+            // : mockTermos.filter(t => t.status === activeTab);
 
-    const totalPages = Math.ceil(filteredTermos.length / itemsPerPage);
-    const paginatedTermos = filteredTermos.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const getStatusBadge = (status: string) => {
-        const styles = {
-            aprovado: { bg: "var(--success-light)", color: "var(--success)", icon: <FaCheckCircle />, label: "Aprovado" },
-            pendente: { bg: "var(--warning-light)", color: "var(--warning)", icon: <FaClock />, label: "Pendente" },
-            recusado: { bg: "var(--danger-light)", color: "var(--danger)", icon: <FaTimesCircle />, label: "Recusado" },
-            arquivado: { bg: "var(--text-tertiary)20", color: "var(--text-tertiary)", icon: <FaFileAlt />, label: "Arquivado" }
-        };
-
-        const style = styles[status as keyof typeof styles] || styles.pendente;
-
-        return (
-            <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "4px",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                fontSize: "11px",
-                fontWeight: "600",
-                background: style.bg,
-                color: style.color
-            }}>
-                {style.icon}
-                {style.label}
-            </span>
-        );
-    };
-
-    const handleDeleteTermo = (id: string, titulo: string) => {
-        if (window.confirm(`Tem certeza que deseja arquivar o termo "${titulo}"?`)) {
-            console.log("Arquivar termo:", id);
-        }
-    };
-
-    if (loading) {
-        return (
-            <DashboardLayout>
-                <div style={styles.loadingContainer}>
-                    <div style={styles.spinner}></div>
-                    <p style={{ color: "var(--text-tertiary)" }}>Carregando termos...</p>
-                </div>
-            </DashboardLayout>
-        );
+        // setTermos(filteredByStatus);
+    } catch (error) {
+        console.error("Erro ao buscar termos:", error);
+    } finally {
+        setLoading(false);
     }
+};
+
+const handleSort = (key: string) => {
+    setSortConfig({
+        key,
+        direction: sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc"
+    });
+};
+
+const getSortIcon = (key: string) => {
+    if (sortConfig.key !== key) return <FaSort style={{ opacity: 0.3 }} />;
+    return sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />;
+};
+
+const filteredTermos = termos
+    .filter(termo => {
+        const matchesSearch = termo.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            termo.definicao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            termo.tags.some(tag => tag.includes(searchTerm.toLowerCase()));
+
+        const matchesCategoria = !filters.categoria || termo.categoria === filters.categoria;
+
+        const matchesDataInicio = !filters.dataInicio ||
+            new Date(termo.dataCriacao) >= new Date(filters.dataInicio);
+
+        const matchesDataFim = !filters.dataFim ||
+            new Date(termo.dataCriacao) <= new Date(filters.dataFim);
+
+        return matchesSearch && matchesCategoria && matchesDataInicio && matchesDataFim;
+    })
+    .sort((a, b) => {
+        const aValue = a[sortConfig.key as keyof Termo];
+        const bValue = b[sortConfig.key as keyof Termo];
+
+        if (sortConfig.key === "autor") {
+            return sortConfig.direction === "asc"
+                ? a.autor.nome.localeCompare(b.autor.nome)
+                : b.autor.nome.localeCompare(a.autor.nome);
+        }
+
+        if (typeof aValue === "string" && typeof bValue === "string") {
+            return sortConfig.direction === "asc"
+                ? aValue.localeCompare(bValue)
+                : bValue.localeCompare(aValue);
+        }
+
+        if (typeof aValue === "number" && typeof bValue === "number") {
+            return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
+        }
+
+        return 0;
+    });
+
+const totalPages = Math.ceil(filteredTermos.length / itemsPerPage);
+const paginatedTermos = filteredTermos.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+);
+
+const getStatusBadge = (status: string) => {
+    const styles = {
+        aprovado: { bg: "var(--success-light)", color: "var(--success)", icon: <FaCheckCircle />, label: "Aprovado" },
+        pendente: { bg: "var(--warning-light)", color: "var(--warning)", icon: <FaClock />, label: "Pendente" },
+        recusado: { bg: "var(--danger-light)", color: "var(--danger)", icon: <FaTimesCircle />, label: "Recusado" },
+        arquivado: { bg: "var(--text-tertiary)20", color: "var(--text-tertiary)", icon: <FaFileAlt />, label: "Arquivado" }
+    };
+
+    const style = styles[status as keyof typeof styles] || styles.pendente;
 
     return (
+        <span style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "4px",
+            padding: "4px 8px",
+            borderRadius: "4px",
+            fontSize: "11px",
+            fontWeight: "600",
+            background: style.bg,
+            color: style.color
+        }}>
+            {style.icon}
+            {style.label}
+        </span>
+    );
+};
+
+const handleDeleteTermo = async (id: string) => {
+    if (!confirm("Arquivar termo?")) return;
+
+    const { error } =
+        await supabase
+            .from("termos")
+            .update({ status: "arquivado" })
+            .eq("id", id);
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    fetchTermos();
+};
+
+if (loading) {
+    return (
         <DashboardLayout>
-            <div style={styles.container}>
-                {/* Header */}
-                <div style={styles.header}>
-                    <div>
-                        <h1 style={styles.title}>Gerenciar Termos</h1>
-                        <p style={styles.subtitle}>
-                            Gerencie todos os termos e documentos da plataforma
-                        </p>
-                    </div>
-
-                    <button
-                        onClick={() => navigate("/termos/novo")}
-                        style={styles.primaryButton}
-                    >
-                        <FaPlus /> Novo Termo
-                    </button>
-                </div>
-
-                {/* Abas de Status */}
-                <div style={styles.tabsContainer}>
-                    <button
-                        onClick={() => setActiveTab("todos")}
-                        style={{
-                            ...styles.tab,
-                            background: activeTab === "todos" ? "var(--primary)" : "transparent",
-                            color: activeTab === "todos" ? "#fff" : "var(--text-secondary)",
-                            borderColor: activeTab === "todos" ? "var(--primary)" : "var(--border-color)"
-                        }}
-                    >
-                        Todos ({termos.length})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("pendente")}
-                        style={{
-                            ...styles.tab,
-                            background: activeTab === "pendente" ? "var(--warning)" : "transparent",
-                            color: activeTab === "pendente" ? "#fff" : "var(--text-secondary)",
-                            borderColor: activeTab === "pendente" ? "var(--warning)" : "var(--border-color)"
-                        }}
-                    >
-                        Pendentes ({termos.filter(t => t.status === "pendente").length})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("aprovado")}
-                        style={{
-                            ...styles.tab,
-                            background: activeTab === "aprovado" ? "var(--success)" : "transparent",
-                            color: activeTab === "aprovado" ? "#fff" : "var(--text-secondary)",
-                            borderColor: activeTab === "aprovado" ? "var(--success)" : "var(--border-color)"
-                        }}
-                    >
-                        Aprovados ({termos.filter(t => t.status === "aprovado").length})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("recusado")}
-                        style={{
-                            ...styles.tab,
-                            background: activeTab === "recusado" ? "var(--danger)" : "transparent",
-                            color: activeTab === "recusado" ? "#fff" : "var(--text-secondary)",
-                            borderColor: activeTab === "recusado" ? "var(--danger)" : "var(--border-color)"
-                        }}
-                    >
-                        Recusados ({termos.filter(t => t.status === "recusado").length})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("arquivado")}
-                        style={{
-                            ...styles.tab,
-                            background: activeTab === "arquivado" ? "var(--text-tertiary)" : "transparent",
-                            color: activeTab === "arquivado" ? "#fff" : "var(--text-secondary)",
-                            borderColor: activeTab === "arquivado" ? "var(--text-tertiary)" : "var(--border-color)"
-                        }}
-                    >
-                        Arquivados ({termos.filter(t => t.status === "arquivado").length})
-                    </button>
-                </div>
-
-                {/* Busca e Filtros */}
-                <div style={styles.searchSection}>
-                    <div style={styles.searchBox}>
-                        <FaSearch style={styles.searchIcon} />
-                        <input
-                            type="text"
-                            placeholder="Buscar por título, descrição ou tags..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={styles.searchInput}
-                        />
-                    </div>
-
-                    <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        style={{
-                            ...styles.filterToggle,
-                            background: showFilters ? "var(--primary-soft)" : "transparent",
-                            borderColor: showFilters ? "var(--primary)" : "var(--border-color)"
-                        }}
-                    >
-                        <FaFilter /> Filtros
-                    </button>
-                </div>
-
-                {/* Painel de Filtros */}
-                {showFilters && (
-                    <div style={styles.filtersPanel}>
-                        <select
-                            value={filters.categoria}
-                            onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
-                            style={styles.filterSelect}
-                        >
-                            <option value="">Todas as categorias</option>
-                            {categorias.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-
-                        <input
-                            type="date"
-                            placeholder="Data inicial"
-                            value={filters.dataInicio}
-                            onChange={(e) => setFilters({ ...filters, dataInicio: e.target.value })}
-                            style={styles.filterDate}
-                        />
-
-                        <input
-                            type="date"
-                            placeholder="Data final"
-                            value={filters.dataFim}
-                            onChange={(e) => setFilters({ ...filters, dataFim: e.target.value })}
-                            style={styles.filterDate}
-                        />
-
-                        <button
-                            onClick={() => setFilters({ categoria: "", dataInicio: "", dataFim: "" })}
-                            style={styles.clearFilters}
-                        >
-                            Limpar filtros
-                        </button>
-                    </div>
-                )}
-
-                {/* Tabela */}
-                <div style={styles.tableContainer}>
-                    <table style={styles.table}>
-                        <thead>
-                            <tr style={styles.tableHeader}>
-                                <th style={styles.tableHeaderCell} onClick={() => handleSort("titulo")}>
-                                    <div style={styles.sortableHeader}>
-                                        Título {getSortIcon("titulo")}
-                                    </div>
-                                </th>
-                                <th style={styles.tableHeaderCell} onClick={() => handleSort("categoria")}>
-                                    <div style={styles.sortableHeader}>
-                                        Categoria {getSortIcon("categoria")}
-                                    </div>
-                                </th>
-                                <th style={styles.tableHeaderCell}>Status</th>
-                                <th style={styles.tableHeaderCell} onClick={() => handleSort("autor")}>
-                                    <div style={styles.sortableHeader}>
-                                        Autor {getSortIcon("autor")}
-                                    </div>
-                                </th>
-                                <th style={styles.tableHeaderCell} onClick={() => handleSort("dataCriacao")}>
-                                    <div style={styles.sortableHeader}>
-                                        Data {getSortIcon("dataCriacao")}
-                                    </div>
-                                </th>
-                                <th style={styles.tableHeaderCell}>Versão</th>
-                                <th style={styles.tableHeaderCell}>Visualizações</th>
-                                <th style={styles.tableHeaderCell}>Assinaturas</th>
-                                <th style={styles.tableHeaderCell}>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedTermos.map((termo) => (
-                                <tr
-                                    key={termo.id}
-                                    style={styles.tableRow}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = "var(--bg-hover)";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = "transparent";
-                                    }}
-                                >
-                                    <td style={styles.tableCell}>
-                                        <div style={styles.termoInfo}>
-                                            <FaFileAlt style={{ color: "var(--primary)", width: "20px", height: "20px" }} />
-                                            <div style={styles.termoContent}>
-                                                <div style={styles.termoTitle}>{termo.titulo}</div>
-                                                <div style={styles.termoDesc}>
-                                                    {termo.descricao?.substring(0, 60)}
-                                                    {termo.descricao?.length > 60 ? "..." : ""}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <span style={styles.categoryBadge}>{termo.categoria}</span>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        {getStatusBadge(termo.status)}
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <div style={styles.authorInfo}>
-                                            <div style={styles.authorAvatar}>
-                                                {termo.autor?.nome?.charAt(0) || "?"}
-                                            </div>
-                                            <span>{termo.autor?.nome || "N/A"}</span>
-                                        </div>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <div>
-                                            <div>{new Date(termo.dataCriacao).toLocaleDateString()}</div>
-                                            {termo.dataPublicacao && (
-                                                <div style={styles.publishDate}>
-                                                    Pub: {new Date(termo.dataPublicacao).toLocaleDateString()}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <span style={styles.versionBadge}>v{termo.versao}</span>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <span style={styles.statBadge}>{termo.visualizacoes || 0}</span>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <span style={styles.statBadge}>{termo.assinaturas || 0}</span>
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        <div style={styles.actionButtons}>
-                                            <button
-                                                onClick={() => navigate(`/termos/${termo.id}`)}
-                                                style={styles.actionButton}
-                                                title="Visualizar"
-                                            >
-                                                <FaEye />
-                                            </button>
-                                            <button
-                                                onClick={() => navigate(`/termos/${termo.id}/editar`)}
-                                                style={styles.actionButton}
-                                                title="Editar"
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteTermo(termo.id, termo.titulo)}
-                                                style={{ ...styles.actionButton, color: "var(--danger)" }}
-                                                title="Arquivar"
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-
-                    {paginatedTermos.length === 0 && (
-                        <div style={styles.emptyState}>
-                            <FaFileAlt size={48} style={{ color: "var(--text-tertiary)", marginBottom: "16px" }} />
-                            <h3 style={styles.emptyTitle}>Nenhum termo encontrado</h3>
-                            <p style={styles.emptyText}>
-                                {searchTerm || filters.categoria
-                                    ? "Tente ajustar seus filtros."
-                                    : "Crie seu primeiro termo clicando em 'Novo Termo'."}
-                            </p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Paginação */}
-                {totalPages > 1 && (
-                    <div style={styles.pagination}>
-                        <button
-                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1}
-                            style={{
-                                ...styles.paginationButton,
-                                opacity: currentPage === 1 ? 0.5 : 1,
-                                cursor: currentPage === 1 ? "not-allowed" : "pointer"
-                            }}
-                        >
-                            <FaChevronLeft />
-                        </button>
-
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                            <button
-                                key={page}
-                                onClick={() => setCurrentPage(page)}
-                                style={{
-                                    ...styles.paginationButton,
-                                    background: currentPage === page ? "var(--primary)" : "transparent",
-                                    color: currentPage === page ? "#fff" : "var(--text-secondary)",
-                                    borderColor: currentPage === page ? "var(--primary)" : "var(--border-color)"
-                                }}
-                            >
-                                {page}
-                            </button>
-                        ))}
-
-                        <button
-                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages}
-                            style={{
-                                ...styles.paginationButton,
-                                opacity: currentPage === totalPages ? 0.5 : 1,
-                                cursor: currentPage === totalPages ? "not-allowed" : "pointer"
-                            }}
-                        >
-                            <FaChevronRight />
-                        </button>
-                    </div>
-                )}
+            <div style={styles.loadingContainer}>
+                <div style={styles.spinner}></div>
+                <p style={{ color: "var(--text-tertiary)" }}>Carregando termos...</p>
             </div>
         </DashboardLayout>
     );
+}
+
+return (
+    <DashboardLayout>
+        <div style={styles.container}>
+            {/* Header */}
+            <div style={styles.header}>
+                <div>
+                    <h1 style={styles.title}>Gerenciar Termos Técnico</h1>
+                    <p style={styles.subtitle}>
+                        Gerencie todos os termos e documentos da plataforma
+                    </p>
+                </div>
+
+                <button
+                    onClick={() => navigate("/termos/novo")}
+                    style={styles.primaryButton}
+                >
+                    <FaPlus /> Novo Termo
+                </button>
+            </div>
+
+            {/* Abas de Status */}
+            <div style={styles.tabsContainer}>
+                <button
+                    onClick={() => setActiveTab("todos")}
+                    style={{
+                        ...styles.tab,
+                        background: activeTab === "todos" ? "var(--primary)" : "transparent",
+                        color: activeTab === "todos" ? "#fff" : "var(--text-secondary)",
+                        borderColor: activeTab === "todos" ? "var(--primary)" : "var(--border-color)"
+                    }}
+                >
+                    Todos ({termos.length})
+                </button>
+                <button
+                    onClick={() => setActiveTab("pendente")}
+                    style={{
+                        ...styles.tab,
+                        background: activeTab === "pendente" ? "var(--warning)" : "transparent",
+                        color: activeTab === "pendente" ? "#fff" : "var(--text-secondary)",
+                        borderColor: activeTab === "pendente" ? "var(--warning)" : "var(--border-color)"
+                    }}
+                >
+                    Pendentes ({termos.filter(t => t.status === "pendente").length})
+                </button>
+                <button
+                    onClick={() => setActiveTab("aprovado")}
+                    style={{
+                        ...styles.tab,
+                        background: activeTab === "aprovado" ? "var(--success)" : "transparent",
+                        color: activeTab === "aprovado" ? "#fff" : "var(--text-secondary)",
+                        borderColor: activeTab === "aprovado" ? "var(--success)" : "var(--border-color)"
+                    }}
+                >
+                    Aprovados ({termos.filter(t => t.status === "aprovado").length})
+                </button>
+                <button
+                    onClick={() => setActiveTab("recusado")}
+                    style={{
+                        ...styles.tab,
+                        background: activeTab === "recusado" ? "var(--danger)" : "transparent",
+                        color: activeTab === "recusado" ? "#fff" : "var(--text-secondary)",
+                        borderColor: activeTab === "recusado" ? "var(--danger)" : "var(--border-color)"
+                    }}
+                >
+                    Recusados ({termos.filter(t => t.status === "recusado").length})
+                </button>
+                <button
+                    onClick={() => setActiveTab("arquivado")}
+                    style={{
+                        ...styles.tab,
+                        background: activeTab === "arquivado" ? "var(--text-tertiary)" : "transparent",
+                        color: activeTab === "arquivado" ? "#fff" : "var(--text-secondary)",
+                        borderColor: activeTab === "arquivado" ? "var(--text-tertiary)" : "var(--border-color)"
+                    }}
+                >
+                    Arquivados ({termos.filter(t => t.status === "arquivado").length})
+                </button>
+            </div>
+
+            {/* Busca e Filtros */}
+            <div style={styles.searchSection}>
+                <div style={styles.searchBox}>
+                    <FaSearch style={styles.searchIcon} />
+                    <input
+                        type="text"
+                        placeholder="Buscar por título, descrição ou tags..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={styles.searchInput}
+                    />
+                </div>
+
+                <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    style={{
+                        ...styles.filterToggle,
+                        background: showFilters ? "var(--primary-soft)" : "transparent",
+                        borderColor: showFilters ? "var(--primary)" : "var(--border-color)"
+                    }}
+                >
+                    <FaFilter /> Filtros
+                </button>
+            </div>
+
+            {/* Painel de Filtros */}
+            {showFilters && (
+                <div style={styles.filtersPanel}>
+                    <select
+                        value={filters.categoria}
+                        onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
+                        style={styles.filterSelect}
+                    >
+                        <option value="">Todas as categorias</option>
+                        {categorias.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+
+                    <input
+                        type="date"
+                        placeholder="Data inicial"
+                        value={filters.dataInicio}
+                        onChange={(e) => setFilters({ ...filters, dataInicio: e.target.value })}
+                        style={styles.filterDate}
+                    />
+
+                    <input
+                        type="date"
+                        placeholder="Data final"
+                        value={filters.dataFim}
+                        onChange={(e) => setFilters({ ...filters, dataFim: e.target.value })}
+                        style={styles.filterDate}
+                    />
+
+                    <button
+                        onClick={() => setFilters({ categoria: "", dataInicio: "", dataFim: "" })}
+                        style={styles.clearFilters}
+                    >
+                        Limpar filtros
+                    </button>
+                </div>
+            )}
+
+            {/* Tabela */}
+            <div style={styles.tableContainer}>
+                <table style={styles.table}>
+                    <thead>
+                        <tr style={styles.tableHeader}>
+                            <th style={styles.tableHeaderCell} onClick={() => handleSort("titulo")}>
+                                <div style={styles.sortableHeader}>
+                                    Título {getSortIcon("titulo")}
+                                </div>
+                            </th>
+                            <th style={styles.tableHeaderCell} onClick={() => handleSort("categoria")}>
+                                <div style={styles.sortableHeader}>
+                                    Categoria {getSortIcon("categoria")}
+                                </div>
+                            </th>
+                            <th style={styles.tableHeaderCell}>Status</th>
+                            <th style={styles.tableHeaderCell} onClick={() => handleSort("autor")}>
+                                <div style={styles.sortableHeader}>
+                                    Autor {getSortIcon("autor")}
+                                </div>
+                            </th>
+                            <th style={styles.tableHeaderCell} onClick={() => handleSort("dataCriacao")}>
+                                <div style={styles.sortableHeader}>
+                                    Data {getSortIcon("dataCriacao")}
+                                </div>
+                            </th>
+                            <th style={styles.tableHeaderCell}>Versão</th>
+                            <th style={styles.tableHeaderCell}>Visualizações</th>
+                            <th style={styles.tableHeaderCell}>Assinaturas</th>
+                            <th style={styles.tableHeaderCell}>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginatedTermos.map((termo) => (
+                            <tr
+                                key={termo.id}
+                                style={styles.tableRow}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = "var(--bg-hover)";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = "transparent";
+                                }}
+                            >
+                                <td style={styles.tableCell}>
+                                    <div style={styles.termoInfo}>
+                                        <FaFileAlt style={{ color: "var(--primary)", width: "20px", height: "20px" }} />
+                                        <div style={styles.termoContent}>
+                                            <div style={styles.termoTitle}>{termo.titulo}</div>
+                                            <div style={styles.termoDesc}>
+                                                {termo.definicao?.substring(0, 60)}
+                                                {termo.definicao?.length > 60 ? "..." : ""}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <span style={styles.categoryBadge}>{termo.categoria}</span>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    {getStatusBadge(termo.status)}
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <div style={styles.authorInfo}>
+                                        <div style={styles.authorAvatar}>
+                                            {termo.autor?.nome?.charAt(0) || "?"}
+                                        </div>
+                                        <span>{termo.autor?.nome || "N/A"}</span>
+                                    </div>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <div>
+                                        <div>{new Date(termo.dataCriacao).toLocaleDateString()}</div>
+                                        {termo.dataPublicacao && (
+                                            <div style={styles.publishDate}>
+                                                Pub: {new Date(termo.dataPublicacao).toLocaleDateString()}
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <span style={styles.versionBadge}>v{termo.versao}</span>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <span style={styles.statBadge}>{termo.visualizacoes || 0}</span>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <span style={styles.statBadge}>{termo.assinaturas || 0}</span>
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <div style={styles.actionButtons}>
+                                        <button
+                                            onClick={() => navigate(`/termos/${termo.id}`)}
+                                            style={styles.actionButton}
+                                            title="Visualizar"
+                                        >
+                                            <FaEye />
+                                        </button>
+                                        <button
+                                            onClick={() => navigate(`/termos/${termo.id}/editar`)}
+                                            style={styles.actionButton}
+                                            title="Editar"
+                                        >
+                                            <FaEdit />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteTermo(termo.id)}
+                                            style={{ ...styles.actionButton, color: "var(--danger)" }}
+                                            title="Arquivar"
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                {paginatedTermos.length === 0 && (
+                    <div style={styles.emptyState}>
+                        <FaFileAlt size={48} style={{ color: "var(--text-tertiary)", marginBottom: "16px" }} />
+                        <h3 style={styles.emptyTitle}>Nenhum termo encontrado</h3>
+                        <p style={styles.emptyText}>
+                            {searchTerm || filters.categoria
+                                ? "Tente ajustar seus filtros."
+                                : "Crie seu primeiro termo clicando em 'Novo Termo'."}
+                        </p>
+                    </div>
+                )}
+            </div>
+
+            {/* Paginação */}
+            {totalPages > 1 && (
+                <div style={styles.pagination}>
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        style={{
+                            ...styles.paginationButton,
+                            opacity: currentPage === 1 ? 0.5 : 1,
+                            cursor: currentPage === 1 ? "not-allowed" : "pointer"
+                        }}
+                    >
+                        <FaChevronLeft />
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            style={{
+                                ...styles.paginationButton,
+                                background: currentPage === page ? "var(--primary)" : "transparent",
+                                color: currentPage === page ? "#fff" : "var(--text-secondary)",
+                                borderColor: currentPage === page ? "var(--primary)" : "var(--border-color)"
+                            }}
+                        >
+                            {page}
+                        </button>
+                    ))}
+
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        style={{
+                            ...styles.paginationButton,
+                            opacity: currentPage === totalPages ? 0.5 : 1,
+                            cursor: currentPage === totalPages ? "not-allowed" : "pointer"
+                        }}
+                    >
+                        <FaChevronRight />
+                    </button>
+                </div>
+            )}
+        </div>
+    </DashboardLayout>
+);
 }
 
 // Estilos otimizados

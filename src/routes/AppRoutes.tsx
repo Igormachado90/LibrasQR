@@ -1,7 +1,7 @@
 // import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import { RequireAuth } from "../auth/RequireAuth";
 
-// import Login from "../pages/Login";
+import Login from "../pages/Login";
 // import Dashboard from "../pages/Dashboard";
 // import Alunos from "../pages/Alunos";
 // import AlunoForm from "../pages/AlunoForm";
@@ -14,7 +14,7 @@
 // import Relatorios from "../pages/Relatorios";
 // import Agenda from "../pages/Agenda";
 // import Escolas from "../pages/Escolas";
-// import EscolasForm from "../pages/EscolasForm";
+// import TermoForm from "../pages/TermoForm";
 // import Usuarios from "../pages/Usuarios";
 // import UsuariosForm from "../pages/UsuariosForm";
 // import FamiliasForm from "../pages/FamiliasForm";
@@ -96,7 +96,7 @@
 //                     path="/escolas/novo"
 //                     element={
 //                         <RequireAuth allowedRoles={["GESTOR"]}>
-//                             <EscolasForm />
+//                             <TermoForm />
 //                         </RequireAuth>
 //                     }
 //                 />
@@ -104,7 +104,7 @@
 //                     path="/escolas/:id/editar"
 //                     element={
 //                         <RequireAuth allowedRoles={["GESTOR"]}>
-//                             <EscolasForm />
+//                             <TermoForm />
 //                         </RequireAuth>
 //                     }
 //                 />
@@ -358,9 +358,8 @@ import Profissionais from "../pages/Profissionais";
 import ProfissionalForm from "../pages/ProfissionalForm";
 import MateriaisDidaticos from "../pages/MateriaisDidaticos";
 import MateriaisForm from "../pages/MateriaisForm";
-import Agenda from "../pages/Agenda";
 import Termos from "../pages/GerenciarTermos";
-import EscolasForm from "../pages/CadastrarTermo";
+import TermoForm from "../pages/TermoFrom";
 import Usuarios from "../pages/Usuarios";
 import UsuariosForm from "../pages/UsuariosForm";
 import FamiliasForm from "../pages/FamiliasForm";
@@ -374,16 +373,20 @@ import Categorias from "../pages/Categorias";
 import AvaliacoesForm from "../pages/AvaliacoesForm";
 import Disponibilidade from "../pages/Disponibilidade";
 import DisponibilidadeForm from "../pages/DisponibilidadeForm";
-import Notificacoes from "../pages/Notificacoes";
 import LandingPage from "../pages/LandingPage";
 import CursoView from "../pages/CursoView";
+import GerenciarNeologismos from "../pages/Neologismos";
+import Configuracao from "../pages/Configuracoes";
+import GerenciarVideos from "../pages/GerenciarVideos";
+import GerenciarEscolas from "../pages/GerenciarEscolas";
+import GerenciarDisciplinas from "../pages/GerenciarDisciplinas";
 
 export default function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<LandingPage />} />
-                {/* <Route path="/login" element={<Login />} /> */}
+                <Route path="/login" element={<Login />} />
                 <Route
                     path="/dashboard"
                     element={<Dashboard />}
@@ -414,11 +417,15 @@ export default function AppRoutes() {
                 />
                 <Route
                     path="/termos/novo"
-                    element={<EscolasForm />}
+                    element={<TermoForm />}
+                />
+                <Route
+                    path="/termos/:id"
+                    element={<GerenciarVideos />}
                 />
                 <Route
                     path="/termos/:id/editar"
-                    element={<EscolasForm />}
+                    element={<TermoForm />}
                 />
                 <Route
                     path="/curso"
@@ -436,6 +443,14 @@ export default function AppRoutes() {
                     path="/curso/:id"
                     element={<CursoView />}
                 />
+                <Route 
+                path="/escolas"
+                element={<GerenciarEscolas />}
+                />
+                <Route 
+                path="/disciplinas"
+                element={<GerenciarDisciplinas />}
+                />
                 <Route
                     path="/aprovarRecusar"
                     element={<Familias />}
@@ -449,8 +464,12 @@ export default function AppRoutes() {
                     element={<FamiliasForm />}
                 />
                 <Route
-                    path="/agenda"
-                    element={<Agenda />}
+                    path="/neologismos"
+                    element={<GerenciarNeologismos />}
+                />
+                <Route
+                    path="/configuracoes"
+                    element={<Configuracao />}
                 />
                 <Route
                     path="/profissionais"
@@ -524,12 +543,9 @@ export default function AppRoutes() {
                     path="/disponibilidade/:id/editar"
                     element={<DisponibilidadeForm />}
                 />
-                <Route
-                    path="/notificacoes"
-                    element={<Notificacoes />}
-                />
+
                 {/* 🚫 404 */}
-                <Route path="*" element={<h1>Página não encontrada</h1>} />
+                <Route path="*" element={<h1>Página não encontrada 404 🚫</h1>} />
             </Routes>
         </BrowserRouter>
     );

@@ -4,12 +4,14 @@ export default function Section({
   title,
   children
 }: {
-  title: string;
+  title?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <section style={{ marginBottom: "32px" }}>
-      <h3 style={{ marginBottom: "16px", color: "#333" }}>{title}</h3>
+      <h3 style={{ marginBottom: "16px", color: "#333", display: "flex", alignItems: "center", gap: "8px" }}>
+        {title}
+      </h3>
 
       <div
         style={{

@@ -5,7 +5,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import Input from "../components/Form/Input";
 import Section from "../components/Form/Section";
 import Select from "../components/Form/Select";
-import { supabase } from "../lib/supabase";
+import supabase from "../lib/supabase";
 
 /* =======================
    TIPAGENS
@@ -132,10 +132,10 @@ export default function ProfissionalForm() {
 
       if (data) {
         setForm({
-          Nome: data.Usuarios?.Nome ?? "",
-          Email: data.Usuarios?.Email ?? "",
-          Telefone: data.Usuarios?.Telefone ?? "",
-          Tipo: data.Usuarios?.Tipo ?? "PROFISSIONAL",
+          // Nome: data.Usuarios?.Nome ?? "",
+          // Email: data.Usuarios?.Email ?? "",
+          // Telefone: data.Usuarios?.Telefone ?? "",
+          // Tipo: data.Usuarios?.Tipo ?? "PROFISSIONAL",
           Especialidades: data.Especialidades ?? "",
           Biografia: data.Biografia ?? "",
           Formacao: data.Formacao ?? "",
@@ -143,7 +143,7 @@ export default function ProfissionalForm() {
           Valor_hora: data.Valor_hora?.toString() ?? ""
         });
         
-        setSelectedPlataformaId(data.Usuarios?.Plataforma_ID?.toString() || "");
+        // setSelectedPlataformaId(data.Usuarios?.Plataforma_ID?.toString() || "");
       }
     } catch (err: any) {
       console.error("Erro ao carregar profissional:", err);
