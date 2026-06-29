@@ -22,6 +22,7 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const [cooldownRemaining, setCooldownRemaining] = useState(0);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const attemptCountRef = useRef<number>(0);
     const firstAttemptTimeRef = useRef<number | null>(null);
@@ -40,6 +41,51 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
         }
 
         onClose();
+    };
+
+     const handleSwitchToLogin = async () => {
+        if (isLoggingOut) return; // Previne múltiplos cliques
+        
+        setIsLoggingOut(true);
+        setError("");
+        setMessage("");
+        
+        try {
+            // Verifica se há sessão ativa
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            // Se tiver sessão, faz logout
+            if (session) {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    console.error('Erro ao fazer logout:', error);
+                } else {
+                    console.log('✅ Usuário deslogado com sucesso');
+                }
+            }
+            
+            // Fecha o modal
+            handleClose();
+            
+            // Chama a função do pai ou navega diretamente
+            if (onSwitchToLogin) {
+                onSwitchToLogin();
+            } else {
+                navigate('/login', { replace: true });
+            }
+            
+        } catch (error) {
+            console.error('Erro ao voltar para login:', error);
+            // Tenta navegar mesmo com erro
+            handleClose();
+            if (onSwitchToLogin) {
+                onSwitchToLogin();
+            } else {
+                navigate('/login', { replace: true });
+            }
+        } finally {
+            setIsLoggingOut(false);
+        }
     };
 
     // Limpeza do intervalo quando o modal é desmontado
@@ -239,8 +285,17 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
 
                 <p style={styles.footerText}>
                     Lembrou a senha?{' '}
-                    <button type="button" onClick={() => { handleClose(); onSwitchToLogin?.(); }} style={styles.linkButton} disabled={loading}>
-                        Voltar ao login
+                    <button
+                        type="button"
+                        onClick={handleSwitchToLogin}
+                        style={{
+                            ...styles.linkButton,
+                            opacity: isLoggingOut ? 0.6 : 1,
+                            cursor: isLoggingOut ? "not-allowed" : "pointer"
+                        }}
+                        disabled={isLoggingOut}
+                    >
+                        {isLoggingOut ? "Saindo..." : "Voltar ao login"}
                     </button>
                 </p>
             </div>
@@ -326,6 +381,15 @@ const styles: Record<string, React.CSSProperties> = {
         color: "#047857",
         borderRadius: "8px",
         fontSize: "14px"
+    },
+    cooldown: {
+        padding: "10px 12px",
+        background: "#fef3c7",
+        border: "1px solid #fde68a",
+        color: "#92400e",
+        borderRadius: "8px",
+        fontSize: "14px",
+        textAlign: "center"
     },
     submitButton: {
         marginTop: "4px",
