@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-// import { useAuth } from "../auth/AuthContext";
 import supabase from "../lib/supabase";
 
 export default function ResetPasswordPage() {
@@ -11,20 +10,19 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
-    const [token, setToken] = useState<string | null>(null);
 
     useEffect(() => {
-        // Pega o token da URL (ex: /reset-password?token=xxx)
-        const tokenParam = searchParams.get("token");
-        if (tokenParam) {
-            setToken(tokenParam);
-        } else {
+        const token = searchParams.get("token");
+        if (!token) {
             setError("Token de recuperação não encontrado.");
         }
     }, [searchParams]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (loading) return;
+
         setError("");
         setMessage("");
 
@@ -54,7 +52,6 @@ export default function ResetPasswordPage() {
 
         try {
             // Se tiver token, troca pelo session
-            
                 const { error: sessionError } = await supabase.auth.exchangeCodeForSession(token);
                 
                 if (sessionError) {
