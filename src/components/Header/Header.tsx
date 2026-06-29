@@ -3,11 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import ThemeToggle from "../Theme/ThemeToggle";
 import { FaSearch, FaBell, FaUserCircle, FaAddressCard, FaCog, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import { useAuth } from "../../auth/AuthContext";
 import { FaLock } from "react-icons/fa6";
 
-export default function Header() {
+// Adicione a interface Props
+interface HeaderProps {
+  onMenuClick?: () => void;  // Torna opcional
+  sidebarCollapsed?: boolean; // Torna opcional
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user, logout } = useAuth(); // Supondo que você tenha um hook useAuth para lidar com autenticação
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -29,9 +37,13 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout(); // Usando o logout do AuthContext
+      navigate("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
   };
 
   const hasUnreadNotifications = true;
@@ -56,34 +68,73 @@ export default function Header() {
       }}
     >
       {/* Busca */}
-      <div style={{ flex: 1, maxWidth: "400px", margin: "0 24px" }}>
-        <div style={{ position: "relative" }}>
-          <input
-            type="text"
-            placeholder="Buscar QR Codes, vídeos..."
-            style={{
-              width: "100%",
-              padding: "10px 16px 10px 44px",
-              borderRadius: "30px",
-              border: "1px solid var(--input-border)",
-              backgroundColor: "var(--input-bg)",
-              fontSize: "14px",
-              outline: "none",
-              color: "var(--text-primary)"
-            }}
-          />
-          <span style={{
-            position: "absolute",
-            left: "16px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            color: "var(--text-tertiary)",
-            fontSize: "16px"
-          }}>
-            <FaSearch />
-          </span>
-        </div>
-      </div>
+<div style={{ flex: 1, maxWidth: "400px", margin: "0 24px" }}>
+  <div style={{ position: "relative" }}>
+    <input
+      id="search-input"
+      type="text"
+      placeholder="Buscar QR Codes, vídeos..."
+      style={{
+        width: "100%",
+        padding: "10px 16px 10px 48px",
+        borderRadius: "30px",
+        border: "1px solid var(--input-border)",
+        backgroundColor: "var(--input-bg)",
+        fontSize: "14px",
+        outline: "none",
+        color: "var(--text-primary)"
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.borderColor = "var(--primary)";
+        e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+        e.currentTarget.style.boxShadow = "0 0 0 3px var(--primary-soft)";
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.borderColor = "var(--input-border)";
+        e.currentTarget.style.backgroundColor = "var(--input-bg)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
+    />
+    <button
+    
+      style={{
+        position: "absolute",
+        left: "8px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        color: "var(--text-tertiary)",
+        fontSize: "16px",
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "8px",
+        borderRadius: "50%",
+        transition: "all 0.2s ease"
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = "var(--primary)";
+        e.currentTarget.style.backgroundColor = "var(--bg-hover)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = "var(--text-tertiary)";
+        e.currentTarget.style.backgroundColor = "transparent";
+      }}
+      onClick={() => {
+        // Lógica de busca aqui
+        const searchInput = document.getElementById('search-input') as HTMLInputElement;
+        if (searchInput?.value) {
+          console.log("Buscando:", searchInput.value);
+          // navigate(`/buscar?q=${encodeURIComponent(searchInput.value)}`);
+        }
+      }}
+    >
+      <FaSearch />
+    </button>
+  </div>
+</div>
 
       {/* Ações direita */}
       <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
@@ -98,7 +149,7 @@ export default function Header() {
               setShowUserMenu(false);
             }}
             style={{
-              background: "none",
+              background: "var(--bg-secondary)",
               border: `1px solid var(--border-color)`,
               fontSize: "18px",
               cursor: "pointer",
@@ -205,7 +256,7 @@ export default function Header() {
           >
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>
-                Igor Machado
+                {user?.name}
               </div>
               <div
                 style={{
@@ -225,7 +276,7 @@ export default function Header() {
                     backgroundColor: "var(--success)"
                   }}
                 />
-                Administrador
+                {user?.role}
               </div>
             </div>
             <div
@@ -242,7 +293,7 @@ export default function Header() {
                 fontWeight: "bold"
               }}
             >
-              IM
+              {user?.name?.charAt(0).toUpperCase()}
             </div>
           </div>
 
@@ -289,13 +340,13 @@ export default function Header() {
                     margin: "0 auto 12px"
                   }}
                 >
-                  IM
+                  {user?.name?.charAt(0).toLowerCase()}
                 </div>
                 <div style={{ fontWeight: "600", color: "var(--text-primary)", marginBottom: "4px" }}>
-                  Igor Machado
+                  {user?.name}
                 </div>
                 <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
-                  igor.machado@email.com
+                  {user?.email}
                 </div>
               </div>
 

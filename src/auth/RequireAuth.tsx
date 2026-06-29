@@ -1,20 +1,44 @@
-// import { Navigate } from "react-router-dom";
-// import { useAuth } from "./AuthContext";
-// import type { UserRole } from "./roles";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import { hasRole, type UserRole } from "../auth/roles";
 // import type { JSX } from "react";
 
-// export function RequireAuth({
-//   children,
-//   allowedRoles
-// }: {
-//   children: JSX.Element;
-//   allowedRoles: UserRole[];
-// }) {
-//   const { user, loading } = useAuth();
+interface RequireAuthProps {
+    // children: React.ReactNode;
+    allowedRoles: UserRole[];
+}
 
-//   if (loading) return null;
-//   if (!user) return <Navigate to="/login" replace />;
-//   if (!allowedRoles.includes(user.role)) return <h2>Acesso negado</h2>;
+export function RequireAuth({
+    // children,
+    allowedRoles,
+}: RequireAuthProps) {
+    const { user, loading } = useAuth();
+    const location = useLocation();
 
-//   return children;
-// }
+    // Mostra um indicador de loading melhor
+    if (loading) {
+        return (
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                fontSize: "16px",
+                color: "#666"
+            }}>
+                Carregando autenticação...
+            </div>
+        );
+    }
+
+    if (!user) {
+        return <Navigate to="/login" state={{from: location}} replace />;
+    }
+
+    if (!hasRole(user.role, allowedRoles)) {
+        console.log(`🚫 [RequireAuth] Acesso negado para ${user.role}`);
+        return <Navigate to="/acesso-negado" replace />;
+    }
+
+    return <Outlet />;
+}

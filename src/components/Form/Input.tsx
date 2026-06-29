@@ -5,12 +5,14 @@ interface Props {
   value?: string | number;
   max?: string;
   min?: string;
+  placeholder?: string;
+  onFocus?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   disabled?: boolean;
 }
 
-export default function Input({ label, name, type = "text", value, onChange, required = false }: Props) {
+export default function Input({ label, name, type = "text", value, placeholder = '', onFocus, onChange, required = false }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       <label style={{ fontSize: "14px", color: "#555" }}>{label}</label>
@@ -20,6 +22,8 @@ export default function Input({ label, name, type = "text", value, onChange, req
         name={name}
         onChange={onChange}
         required={required}
+        placeholder={placeholder}
+        onFocus={onFocus}
         readOnly={!onChange}
         style={{
           padding: "10px",
