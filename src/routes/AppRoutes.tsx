@@ -57,6 +57,7 @@ import InterpreteVideos from "../pages/interprete/GerenciarVideos";
 
 // Outros
 import Categorias from "../pages/Categorias";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 export default function AppRoutes() {
     const { user, getUserDashboardRoute } = useAuth();
@@ -67,6 +68,7 @@ export default function AppRoutes() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/acesso-negado" element={<AcessoNegado />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             {/* Rotas do Admin */}
             <Route element={<RequireAuth allowedRoles={[ROLES.ADMIN]} />}>

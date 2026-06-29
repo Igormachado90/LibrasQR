@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import RegisterModal from "../../components/Auth/RegisterModal";
 import ForgotPasswordModal from "../../components/Auth/ForgotPasswordModal";
-import ResetPasswordModal from "../../components/Auth/ResetPasswordModal";
 
-type ModalType = "register" | "forgotPassword" | "resetPassword" | null;
+type ModalType = "register" | "forgotPassword" | null;
 
 export default function Login() {
     const { user, login, loading: authLoading, getUserDashboardRoute } = useAuth();
@@ -17,8 +16,8 @@ export default function Login() {
 
     // Estados para os modais
     const [activeModal, setActiveModal] = useState<ModalType>(null);
-    const [resetToken, setResetToken] = useState("");
-    const [resetEmail, setResetEmail] = useState("");
+    // const [resetToken, setResetToken] = useState("");
+    // const [resetEmail, setResetEmail] = useState("");
 
     const redirected = useRef(false);
 
@@ -40,14 +39,14 @@ export default function Login() {
     // Funções para controlar modais
     const openModal = (modal: ModalType, token?: string, email?: string) => {
         setActiveModal(modal);
-        if (token) setResetToken(token);
-        if (email) setResetEmail(email);
+        // if (token) setResetToken(token);
+        // if (email) setResetEmail(email);
     };
 
     const closeModal = () => {
         setActiveModal(null);
-        setResetToken("");
-        setResetEmail("");
+        // setResetToken("");
+        // setResetEmail("");
     };
 
     function validateEmail(email: string): boolean {
@@ -351,19 +350,6 @@ export default function Login() {
             <ForgotPasswordModal
                 isOpen={activeModal === "forgotPassword"}
                 onClose={closeModal}
-                onSwitchToLogin={() => {
-                    closeModal();
-                }}
-                onSwitchToReset={(token, email) => {
-                    openModal("resetPassword", token, email);
-                }}
-            />
-
-            <ResetPasswordModal
-                isOpen={activeModal === "resetPassword"}
-                onClose={closeModal}
-                token={resetToken}
-                email={resetEmail}
                 onSwitchToLogin={() => {
                     closeModal();
                 }}

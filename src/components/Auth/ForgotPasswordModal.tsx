@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import supabase from "../../lib/supabase";
 
 type ForgotPasswordModalProps = {
     isOpen: boolean;
     onClose: () => void;
     onSwitchToLogin?: () => void;
-    onSwitchToReset?: (token: string, email: string) => void;
+    // onSwitchToReset?: (token: string, email: string) => void;
 };
 
-export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin, onSwitchToReset }: ForgotPasswordModalProps) {
+export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }: ForgotPasswordModalProps) {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -37,13 +39,19 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin, 
 
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-                redirectTo: `${window.location.origin}/login`
+                redirectTo: `https://libras-qr.vercel.app/reset-password`
+                // redirectTo: `${window.location.origin}/reset-password`
             });
 
             if (error) throw error;
 
             setMessage("Se o e-mail estiver cadastrado, enviaremos instruções para redefinir a senha.");
-            onSwitchToReset?.("", email.trim());
+            
+            // Fecha o modal após sucesso
+            setTimeout(() => {
+                handleClose();
+            }, 3000);
+
         } catch (err: any) {
             setError(err?.message || "Não foi possível enviar a recuperação.");
         } finally {
@@ -64,13 +72,17 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin, 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <label style={styles.label}>
                         E-mail
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.input} placeholder="seu@email.com" />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.input} placeholder="seu@email.com" disabled={loading} />
                     </label>
 
-                    {error ? <div style={styles.error}>{error}</div> : null}
-                    {message ? <div style={styles.success}>{message}</div> : null}
+                    {error && <div style={styles.error}>{error}</div>}
+                    {message && <div style={styles.success}>{message}</div>}
 
-                    <button type="submit" disabled={loading} style={styles.submitButton}>
+                    <button type="submit" disabled={loading} style={{
+                            ...styles.submitButton,
+                            opacity: loading ? 0.7 : 1,
+                            cursor: loading ? "not-allowed" : "pointer"
+                        }}>
                         {loading ? "Enviando..." : "Enviar instruções"}
                     </button>
                 </form>
