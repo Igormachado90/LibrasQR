@@ -10,9 +10,9 @@ type ForgotPasswordModalProps = {
 
 // Constantes para controle de rate limit
 const RATE_LIMIT = {
-    MAX_ATTEMPTS: 3,
-    WINDOW_MS: 15 * 60 * 1000, // 15 minutos
-    COOLDOWN_MS: 60 * 1000 // 1 minuto entre tentativas
+    MAX_ATTEMPTS: 3,          // 3 tentativas
+    WINDOW_MS: 5 * 60 * 1000, // 5 minutos (alinhado com Supabase)
+    COOLDOWN_MS: 2 * 60 * 1000 // 2 minutos entre tentativas
 };
 
 export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }: ForgotPasswordModalProps) {
@@ -43,17 +43,17 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
         onClose();
     };
 
-     const handleSwitchToLogin = async () => {
+    const handleSwitchToLogin = async () => {
         if (isLoggingOut) return; // Previne múltiplos cliques
-        
+
         setIsLoggingOut(true);
         setError("");
         setMessage("");
-        
+
         try {
             // Verifica se há sessão ativa
             const { data: { session } } = await supabase.auth.getSession();
-            
+
             // Se tiver sessão, faz logout
             if (session) {
                 const { error } = await supabase.auth.signOut();
@@ -63,17 +63,17 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
                     console.log('✅ Usuário deslogado com sucesso');
                 }
             }
-            
+
             // Fecha o modal
             handleClose();
-            
+
             // Chama a função do pai ou navega diretamente
             if (onSwitchToLogin) {
                 onSwitchToLogin();
             } else {
                 navigate('/login', { replace: true });
             }
-            
+
         } catch (error) {
             console.error('Erro ao voltar para login:', error);
             // Tenta navegar mesmo com erro
@@ -98,7 +98,12 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
     }, []);
 
     // Verifica se o usuário excedeu o limite de tentativas
-    const checkRateLimit = (): { allowed: boolean; message?: string } => {
+    const checkRateLimit = (): {
+        allowed: boolean;
+        message?: string;
+        remainingAttempts?: number;
+        timeRemaining?: number;
+    } => {
         const now = Date.now();
 
         // Reset do contador se passou a janela de tempo
@@ -117,7 +122,9 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
                 const remaining = Math.ceil((RATE_LIMIT.COOLDOWN_MS - timeSinceLastAttempt) / 1000);
                 return {
                     allowed: false,
-                    message: `Aguarde ${remaining} segundos antes de tentar novamente.`
+                    message: `Aguarde ${remaining} segundos antes de tentar novamente.`,
+                    remainingAttempts: RATE_LIMIT.MAX_ATTEMPTS - attemptCountRef.current,
+                    timeRemaining: remaining
                 };
             }
         }
@@ -129,11 +136,13 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
             );
             return {
                 allowed: false,
-                message: `Limite de tentativas excedido. Aguarde ${remaining} minutos.`
+                message: `Limite de tentativas excedido. Aguarde ${remaining} minutos.`,
+                remainingAttempts: 0,
+                timeRemaining: remaining * 60
             };
         }
 
-        return { allowed: true };
+        return { allowed: true, remainingAttempts: RATE_LIMIT.MAX_ATTEMPTS - attemptCountRef.current };
     };
 
     const startCooldownTimer = (seconds: number) => {
@@ -202,10 +211,10 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
                     }
                     lastAttemptTimeRef.current = now;
 
-                    // Inicia cooldown de 1 minuto
-                    startCooldownTimer(60);
+                    // Inicia cooldown de 2 minutos (alinhado com COOLDOWN_MS)
+                    startCooldownTimer(120); // 2 minutos
 
-                    throw new Error("Muitas tentativas. Aguarde 1 minuto antes de tentar novamente.");
+                    throw new Error(`⏳ Muitas tentativas. Aguarde ${RATE_LIMIT.COOLDOWN_MS/60000} minutos antes de tentar novamente.`);
                 }
                 throw error;
             }
@@ -265,7 +274,21 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
                             autoFocus />
                     </label>
 
-                    {error && <div style={styles.error}>{error}</div>}
+                    {error && (
+                    <div style={styles.error}>
+                        <div>{error}</div>
+                        {attemptCountRef.current > 0 && attemptCountRef.current < RATE_LIMIT.MAX_ATTEMPTS && (
+                            <div style={styles.attemptsWarning}>
+                                📊 Tentativas restantes: {RATE_LIMIT.MAX_ATTEMPTS - attemptCountRef.current} de {RATE_LIMIT.MAX_ATTEMPTS}
+                            </div>
+                        )}
+                        {attemptCountRef.current >= RATE_LIMIT.MAX_ATTEMPTS && (
+                            <div style={styles.attemptsLimit}>
+                                🔒 Limite máximo de tentativas atingido
+                            </div>
+                        )}
+                    </div>
+                )}
                     {message && <div style={styles.success}>{message}</div>}
 
                     {cooldownRemaining > 0 && (
@@ -414,5 +437,24 @@ const styles: Record<string, React.CSSProperties> = {
         cursor: "pointer",
         fontWeight: 600,
         padding: 0
+    },
+        attemptsWarning: {
+        marginTop: '8px',
+        fontSize: '12px',
+        color: '#92400e',
+        background: '#fef3c7',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontWeight: '500'
+    },
+    
+    attemptsLimit: {
+        marginTop: '8px',
+        fontSize: '12px',
+        color: '#dc2626',
+        fontWeight: 'bold',
+        background: '#fee2e2',
+        padding: '4px 8px',
+        borderRadius: '4px'
     }
 };
