@@ -109,28 +109,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // LOGIN (SEM DUPLICAÇÃO)
     // =========================
     const login = useCallback(async (email: string, password: string) => {
+        if (!email || !password) {
+            throw new Error("Email e senha são obrigatórios");
+        }
+
+        setLoading(true);
+
         try {
-            setLoading(true);
-            console.log("Tentando login com:", email);
-
-            if (!email || !password) {
-                throw new Error("Email e senha são obrigatórios");
-            }
-
             const { data, error } = await supabase.auth.signInWithPassword({
-                email: email.trim(),
+                email,
                 password
             });
+
+            console.log("informar dados:", data.session)
 
             if (error) {
                 const message = String(error.message || "").toLowerCase();
                 if (message.includes("rate limit") || message.includes("too many requests") || message.includes("429")) {
                     throw new Error("Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.");
                 }
-                throw error;
+                throw new Error(error.message || "Erro ao tentar fazer login. Verifique seu email e senha.");
             }
 
-            if (!data.session) {
+            if (!data?.session) {
                 throw new Error("Não foi possível iniciar a sessão.");
             }
 

@@ -195,10 +195,10 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }
         setLoading(true);
 
         try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-                redirectTo: `https://libras-qr.vercel.app/reset-password`
-                // redirectTo: `${window.location.origin}/reset-password`
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
             });
+            console.log(data);
 
             if (error) {
                 // Tratamento específico para erro 429

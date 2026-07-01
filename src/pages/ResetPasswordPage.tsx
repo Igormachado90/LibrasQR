@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import supabase from "../lib/supabase";
 
-export default function ResetPasswordPage() {
+interface ResetPasswordPageProps {
+    onSwitchToLogin?: () => void;
+}
+
+export default function ResetPasswordPage({ onSwitchToLogin }: ResetPasswordPageProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -13,14 +17,17 @@ export default function ResetPasswordPage() {
     const [error, setError] = useState("");
     const [tokenValid, setTokenValid] = useState<boolean | null>(null);
     const [isVerifying, setIsVerifying] = useState(true);
+    const [success, setSuccess] = useState(false);
+
+    const getTokenFromHash = (): string | null => {
+        const hashParams = new URLSearchParams(location.hash.substring(1));
+        return hashParams.get("access_token") || hashParams.get("token") || hashParams.get("code");
+    };
 
     useEffect(() => {
         const validateToken = async () => {
-            // PEGA OS PARÂMETROS DA URL (incluindo os de erro no hash)
-            const token = searchParams.get("token");
-            
-            // IMPORTANTE: Captura os parâmetros do hash (#error=access_denied...)
             const hashParams = new URLSearchParams(location.hash.substring(1));
+            const token = getTokenFromHash() || searchParams.get("token") || searchParams.get("code");
             const errorParam = hashParams.get("error") || searchParams.get("error");
             const errorCode = hashParams.get("error_code") || searchParams.get("error_code");
             const errorDescription = hashParams.get("error_description") || searchParams.get("error_description");
@@ -32,13 +39,14 @@ export default function ResetPasswordPage() {
                 errorDescription,
                 hash: location.hash,
                 search: location.search,
-                hashParams: Object.fromEntries(hashParams)
+                hashParams: Object.fromEntries(hashParams),
+                allSearchParams: Object.fromEntries(searchParams)
             });
 
             // VERIFICA SE TEM ERRO NA URL
             if (errorParam || errorCode) {
                 let mensagemErro = "Link inválido ou expirado.";
-                
+
                 if (errorCode === "otp_expired") {
                     mensagemErro = "⏰ O link de redefinição expirou. Solicite uma nova redefinição.";
                 } else if (errorCode === "access_denied") {
@@ -53,36 +61,91 @@ export default function ResetPasswordPage() {
                 return;
             }
 
-            // VERIFICA SE TEM TOKEN
             if (!token) {
+                // Tenta obter a sessão diretamente - talvez o usuário já esteja autenticado
+                try {
+                    const { data: sessionData } = await supabase.auth.getSession();
+                    
+                    if (sessionData.session) {
+                        // O usuário pode ter sido redirecionado do email com a sessão já definida
+                        console.log("🔑 Sessão encontrada sem token, verificando usuário...");
+                        
+                        // Verifica se esta é uma sessão válida para redefinição de senha
+                        const { data: userData, error: userError } = await supabase.auth.getUser();
+                        
+                        if (!userError && userData.user) {
+                            console.log("✅ Sessão válida encontrada para o usuário:", userData.user.email);
+                            setTokenValid(true);
+                            setError("");
+                            setIsVerifying(false);
+                            return;
+                        }
+                    }
+                } catch (sessionErr) {
+                    console.log("Nenhuma sessão válida encontrada");
+                }
+
+                // Se chegamos aqui, não há token e nem sessão válida
                 setError("Token de recuperação não encontrado. Solicite uma nova redefinição.");
                 setTokenValid(false);
                 setIsVerifying(false);
                 return;
             }
 
-            // VALIDA O TOKEN
             try {
-                const { error } = await supabase.auth.exchangeCodeForSession(token);
-                
+                // Tenta trocar o código por sessão se for um código
+                if (token && token.length > 10) {
+                    try {
+                        const { data: codeData, error: codeError } = await supabase.auth.exchangeCodeForSession(token);
+                        if (!codeError && codeData.session) {
+                            console.log("✅ Código trocado por sessão com sucesso");
+                            setTokenValid(true);
+                            setError("");
+                            setIsVerifying(false);
+                            return;
+                        }
+                    } catch (exchangeErr) {
+                        console.log("Não foi possível trocar o código, tentando outros métodos");
+                    }
+                }
+
+            
+                const { data, error } = await supabase.auth.getSession();
+
+                console.log("Data da sessão:", data);
+
                 if (error) {
                     console.error("Erro ao validar token:", error);
-                    
+
                     if (error.message?.includes("expired")) {
                         setError("⏰ O link de redefinição expirou. Solicite uma nova redefinição.");
-                    } else if (error.message?.includes("invalid")) {
+                    } else if (error.message?.includes("invalid") || error.message?.includes("not found")) {
                         setError("🔒 Link inválido. Solicite uma nova redefinição.");
                     } else {
                         setError(error.message || "Link inválido ou expirado.");
                     }
                     setTokenValid(false);
-                } else {
-                    setTokenValid(true);
-                    setError("");
+                    return;
                 }
+
+                if (!data.session) {
+                    setError("Sessão não encontrada. O link pode ter expirado.");
+                    setTokenValid(false);
+                    return;
+                }
+
+                const { data: userData, error: userError } = await supabase.auth.getUser();
+                if (userError || !userData.user) {
+                    throw userError || new Error("Usuário não encontrado após o link de recuperação.");
+                }
+
+                console.log("✅ Token validado com sucesso para:", userData.user.email);
+
+                setTokenValid(true);
+                setError("");
             } catch (err: any) {
                 console.error("Erro ao validar token:", err);
-                setError("Erro ao validar o link. Solicite uma nova redefinição.");
+                setError(err?.message || "Erro ao validar o link. Solicite uma nova redefinição.");
                 setTokenValid(false);
             } finally {
                 setIsVerifying(false);
@@ -90,7 +153,7 @@ export default function ResetPasswordPage() {
         };
 
         validateToken();
-    }, [searchParams, location]);
+    }, [location.hash, location.search, searchParams, location.pathname]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -99,13 +162,6 @@ export default function ResetPasswordPage() {
 
         setError("");
         setMessage("");
-
-        const token = searchParams.get("token");
-
-        if (!token) {
-            setError("Token inválido. Solicite uma nova redefinição.");
-            return;
-        }
 
         if (!password || !confirmPassword) {
             setError("Preencha a nova senha.");
@@ -125,24 +181,36 @@ export default function ResetPasswordPage() {
         setLoading(true);
 
         try {
-            // Troca o token por uma sessão
-            const { error: sessionError } = await supabase.auth.exchangeCodeForSession(token);
-            
-            if (sessionError) {
-                if (sessionError.message?.includes("expired")) {
-                    throw new Error("O link expirou. Solicite uma nova redefinição.");
+            const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+            if (sessionError || !sessionData.session) {
+                const token = getTokenFromHash() || searchParams.get("token") || searchParams.get("code");
+                
+                if (token) {
+                    const { data: codeData, error: codeError } = await supabase.auth.exchangeCodeForSession(token);
+                    if (codeError || !codeData.session) {
+                        throw new Error("Não foi possível criar a sessão de recuperação.");
+                    }
+                } else {
+                    throw new Error("O link de recuperação não está mais válido. Solicite uma nova redefinição.");
                 }
-                throw sessionError;
             }
 
-            // Atualiza a senha
-            const { error } = await supabase.auth.updateUser({ password });
+            const { data: user, error } = await supabase.auth.updateUser({ 
+                password: password
+            });
+
+            console.log("Dados do usuário atualizados:", user);
+
             if (error) throw error;
 
             setMessage("✅ Senha atualizada com sucesso!");
+            setSuccess(true);
 
-            // Redireciona para login após 2 segundos
+            await supabase.auth.signOut();
+
             setTimeout(() => {
+                // onSwitchToLogin(),
                 navigate("/login", { 
                     state: { message: "Senha redefinida com sucesso! Faça login com sua nova senha." }
                 });
@@ -297,7 +365,7 @@ export default function ResetPasswordPage() {
                         onClick={() => navigate("/login")}
                         style={styles.linkButton}
                     >
-                        ← Voltar ao login
+                        Voltar ao login
                     </button>
                 </form>
             </div>
@@ -418,3 +486,4 @@ const styles: Record<string, React.CSSProperties> = {
         margin: "0 auto"
     }
 };
+

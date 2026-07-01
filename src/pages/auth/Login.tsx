@@ -89,6 +89,7 @@ export default function Login() {
         } catch (err: any) {
             setError(err.message || "Email ou senha inválidos. Por favor, tente novamente.");
             console.error("❌ [Login] Erro no login:", err);
+        } finally {
             setIsSubmitting(false);
         }
     }
